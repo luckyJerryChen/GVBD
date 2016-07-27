@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="GVBD2"
+  id="myeclipse.1451181467076"
+  context-root="/GVBD"
+  j2ee-spec="6.0"
+  archive="GVBD2.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

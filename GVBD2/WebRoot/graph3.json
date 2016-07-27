@@ -1,0 +1,53 @@
+{
+	"nodes" : [{
+				"name" : "Myriel",
+				"group" : 1,
+				"cx" : 100,
+				"cy" : 100
+			}, {
+				"name" : "Napoleon",
+				"group" : 1,
+				"cx" : 150,
+				"cy" : 150
+			}, {
+				"name" : "Mlle.Baptistine",
+				"group" : 1,
+				"cx" : 200,
+				"cy" : 200
+			}, {
+				"name" : "Mme.Magloire",
+				"group" : 1,
+				"cx" : 250,
+				"cy" : 250
+			}, {
+				"name" : "CountessdeLo",
+				"group" : 1,
+				"cx" : 300,
+				"cy" : 300
+			}, {
+				"name" : "Geborand",
+				"group" : 1,
+				"cx" : 350,
+				"cy" : 350
+			}, {
+				"name" : "Champtercier",
+				"group" : 1,
+				"cx" : 400,
+				"cy" : 400
+			}, {
+				"name" : "Cravatte",
+				"group" : 1,
+				"cx" : 450,
+				"cy" : 450
+			}, {
+				"name" : "Count",
+				"group" : 1,
+				"cx" : 500,
+				"cy" : 500
+			}, {
+				"name" : "OldMan",
+				"group" : 1,
+				"cx" : 550,
+				"cy" : 550
+			}]
+}
