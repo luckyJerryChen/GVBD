@@ -1,5 +1,7 @@
 package gvbd.servlet;
 
+import gvbd.config.ChengLayoutConfig;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -45,8 +47,15 @@ public class postData extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println(request.getParameter("kvalue"));
-		
+		System.out.println(request.getParameter("kvalue"));//k值
+		System.out.println(request.getParameter("title"));//布局方式
+		System.out.println(request.getParameter("speed"));//速度值
+		System.out.println(request.getParameter("isDirected"));//是否是有向图
+		System.out.println(request.getParameter("cool"));//cool值
+		System.out.println(request.getParameter("forceThreshold"));//forceThreshold值
+		System.out.println(request.getParameter("temperature"));//temperature值
+		System.out.println(request.getParameter("deep"));//deep值
+		ChengLayoutConfig ChengLayout = new ChengLayoutConfig();
 		
 		
 		

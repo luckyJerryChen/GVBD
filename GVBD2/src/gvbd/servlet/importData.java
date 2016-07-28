@@ -46,6 +46,7 @@ public class importData extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println(request.getParameter("uploadfile"));
+		System.out.println(request.getParameter("radiofield"));
 		/*response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
