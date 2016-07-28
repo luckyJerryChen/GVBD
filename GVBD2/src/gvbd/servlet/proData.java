@@ -1,5 +1,12 @@
 package gvbd.servlet;
 
+import gvbd.config.DataConfig;
+import gvbd.data.BSPNodeFormatImpl;
+import gvbd.util.generateData;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -45,8 +52,14 @@ public class proData extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println(request.getParameter("number"));//数目
-		System.out.println(request.getParameter("avg"));//平均度
+
+		String [] args={request.getParameter("number"),request.getParameter("avg"),request.getParameter("random")};
+		generateData.generate(args);
+		DataConfig.setDataPath("dataSimple/random.txt");
+		BufferedReader br=new BufferedReader(new FileReader(new File(DataConfig.getDataPath())));
+		DataConfig.setDataReader(br);
+		DataConfig.setNodeFormat(new BSPNodeFormatImpl());
+		DataConfig.setNodeNum(Integer.parseInt(request.getParameter("number")));
 //		response.setContentType("text/html");
 //		PrintWriter out = response.getWriter();
 //		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
