@@ -8,6 +8,14 @@ public class DataConfig {
 	private static String dataPath;
 	private static BufferedReader dataReader;
 	private static NodeFormat nodeFormat;
+	private static int NodeNum;
+	
+	public static int getNodeNum() {
+		return NodeNum;
+	}
+	public static void setNodeNum(int nodeNum) {
+		NodeNum = nodeNum;
+	}
 	public static String getDataPath() {
 		return dataPath;
 	}
@@ -26,4 +34,5 @@ public class DataConfig {
 	public static void setNodeFormat(NodeFormat nodeFormat) {
 		DataConfig.nodeFormat = nodeFormat;
 	}
+
 }
