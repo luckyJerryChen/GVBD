@@ -42,19 +42,13 @@ Ext.onReady(function() {
                     type: 'vbox',
                     align: 'stretch'
                 },
-                border: false,
+                fileUpload:true,
                 bodyPadding: 10,
-                fieldDefaults: {
-                    labelAlign: 'top',
-                    labelWidth: 100,
-                    labelStyle: 'font-weight:bold'
-                },
                 items: [{
                 	id:'uploadfile',
-                	xtype: 'filefield',
+                	xtype: 'textfield',
                     name: 'uploadfile',
-                    fieldLabel: 'File upload',
-                    value:'',
+                    inputType: 'file',
                     allowBlank: false
                 }, {
                 	id:"radiofield",
@@ -74,15 +68,16 @@ Ext.onReady(function() {
                 }],
 
                 buttons: [{
-                    text: 'Cancel',
+                    text: '取消',
                     handler: function() {
                         this.up('form').getForm().reset();
                         this.up('window').hide();
                     }
                 }, {
-                    text: 'Send',
+                    text: '提交',
                     handler: function() {
                         if (this.up('form').getForm().isValid()) {
+                        	console.log(Ext.getCmp('uploadfile').getValue());
                         	
                         	Ext.Ajax.request({
                         	    url: 'servlet/importData',
@@ -140,11 +135,20 @@ Ext.onReady(function() {
                      maxValue: 125,
                      allowNegative:false,
                      allowBlank: false
-                }, {
+                },{
                 	xtype: 'numberfield',
                 	id:'avg',
-                    fieldLabel: '平均度',
+                    fieldLabel: '基础度',
                     name: 'avg',
+                    value: 1,
+                    minValue: 1,
+                    maxValue: 125,
+                    allowBlank: false
+                },{
+                	xtype: 'numberfield',
+                	id:'random',
+                    fieldLabel: '随机度',
+                    name: 'random',
                     value: 1,
                     minValue: 1,
                     maxValue: 125,
@@ -152,37 +156,27 @@ Ext.onReady(function() {
                 }],
 
                 buttons: [{
-                    text: 'Cancel',
+                    text: '取消',
                     handler: function() {
                         this.up('formimport').getForm().reset();
                         this.up('window').hide();
                     }
                 }, {
-                    text: 'Send',
+                    text: '提交',
                     handler: function() {
                         if (this.up('form').getForm().isValid()) {
                         	Ext.Ajax.request({
                         	    url: 'servlet/proData',
-                        	    params: {avg:Ext.getCmp('avg').getValue(),number:Ext.getCmp('number').getValue()},
+                        	    params: {avg:Ext.getCmp('avg').getValue(),number:Ext.getCmp('number').getValue(),random:Ext.getCmp('random').getValue()},
                         	    async: false,
                         	    success: function(response){
-                        	    	
-                        	    	Ext.MessageBox.alert('Thank you!', 'Your inquiry has been sent. We will respond as soon as possible.');
-                        	        
+                        	    	Ext.MessageBox.alert('Thank you!', 'Your inquiry has been sent. We will respond as soon as possible.');  
                         	    },
                         	    error:function(response){
                         	    	Ext.MessageBox.alert('error!', 'Your inquiry has been sent. We will respond as soon as possible.');
                         	    }
                         	});
-//                        	form.submit({
-//                                url: 'servlet/importData',
-//                                success: function(form, action) {
-//                                	Ext.MessageBox.alert('Thank you!', 'Your inquiry has been sent. We will respond as soon as possible.');
-//                                },
-//                                failure: function(form, action) {
-//                                	Ext.MessageBox.alert('error!', 'Your inquiry has been sent. We will respond as soon as possible.');
-//                                }
-//                            });
+
                             this.up('form').getForm().reset();
                             this.up('window').hide();
                         }
@@ -194,7 +188,7 @@ Ext.onReady(function() {
                 title: action,
                 closeAction: 'hide',
                 width: 200,
-                height: 200,
+                height: 250,
                 layout: 'fit',
                 resizable: true,
                 modal: true,
@@ -266,7 +260,7 @@ Ext.onReady(function() {
 
    
   //
-	var window = Ext.create('Ext.container.Viewport', {
+	var windowExt = Ext.create('Ext.container.Viewport', {
 		layout : 'border',
 		items : [{// 上方面板
 			region : 'north',
@@ -305,9 +299,7 @@ Ext.onReady(function() {
 					}, {
 						xtype : 'button',
 						text : '帮助',
-						menu : [
-						        {text : '关于(A)',handler: Ext.Function.pass(aboutus)}
-						       ]
+						handler: Ext.Function.pass(aboutus)
 					}]
 
 		  }, {	// 左侧面板
@@ -551,7 +543,6 @@ Ext.onReady(function() {
 				}, {
 					region : 'center',
 					xtype : 'tabpanel', // TabPanel itself has no title
-					
 					items :	Ext.widget('singleview', {
 								width : 5000,height : 5000
 					})
@@ -568,11 +559,12 @@ Ext.onReady(function() {
 	}
 	handleActivate();
 	   var  index = 0;
-	   var tabs = window.getComponent('tabpanel');
-	    function addTab (closable) {
+	   
+	    function addTab () {
+	    	var tabs = windowExt.getComponent('tabpanel');
+	 	   console.log(tabs);
             ++index;
             tabs.add({
-                closable: !!closable,
                 html: 'Tab Body ' + index + '<br/><br/>',
                 iconCls: 'tabs',
                 title: 'New Tab ' + index
