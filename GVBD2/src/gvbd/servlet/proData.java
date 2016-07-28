@@ -45,8 +45,8 @@ public class proData extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println(request.getParameter("number"));
-		System.out.println(request.getParameter("avg"));
+		System.out.println(request.getParameter("number"));//数目
+		System.out.println(request.getParameter("avg"));//平均度
 //		response.setContentType("text/html");
 //		PrintWriter out = response.getWriter();
 //		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
