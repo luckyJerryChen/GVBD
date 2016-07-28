@@ -226,7 +226,7 @@ Ext.onReady(function() {
 			var target = d3.select("#" + this.id + "-body");
 		    var svg = target.append("svg").attr("width", width).attr("height", height);			
 		    
-			d3.json("json.json", function(json){
+			d3.json("data/json.json", function(json){
 				var lines = svg.selectAll("line").data(json.links).enter().append("line");			
 				var lineAttribute=lines
 				.attr("x1",function(d){return d.x1})
