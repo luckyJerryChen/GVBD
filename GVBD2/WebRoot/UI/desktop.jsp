@@ -32,10 +32,7 @@
 
 <script type="text/javascript" charset="UTF-8" src="js/UI/desktop.js"></script>
 
-
-
-
-</head>
+<script type="text/javascript" src="js/UI/jquery-1.8.0.js"></script></head>
 
 <body>
 
