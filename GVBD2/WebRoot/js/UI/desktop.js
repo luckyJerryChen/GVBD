@@ -27,7 +27,7 @@ Ext.onReady(function() {
         proxy: {
             // load using HTTP
             type: 'ajax',
-            url: 'json.json',
+            url: 'data/json.json',
             // the return will be XML, so lets set up a reader
             reader: {
             	root: "nodes"
@@ -203,7 +203,7 @@ Ext.onReady(function() {
         }
         production_val.show();
     }
-    
+
     
     Ext.define('EB.view.content.SingleView', {
 		extend : 'Ext.panel.Panel',
@@ -221,41 +221,45 @@ Ext.onReady(function() {
 			me.callParent(arguments);
 			me.drawMap();
 		},
+		
 		drawMap : function() {
-			var width = 5000, height = 5000;
-			var target = d3.select("#" + this.id + "-body");
-		    var svg = target.append("svg").attr("width", width).attr("height", height);			
+			var width = 5000, height = 1000;
+		    var zoom = d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", zoomed); 
+		    var svg = d3.select("#" + this.id + "-body").append("svg").attr("width", width).attr("height", height);
 		    
 			d3.json("data/json.json", function(json){
-				var lines = svg.selectAll("line").data(json.links).enter().append("line");			
+				var circles_group = svg.append("g").call(zoom);
+				var lines = circles_group.selectAll("line").data(json.links).enter().append("line");			
 				var lineAttribute=lines
 				.attr("x1",function(d){return d.x1})
 				.attr("y1",function(d){return d.y1})
 				.attr("x2",function(d){return d.x2})
 				.attr("y2",function(d){return d.y2})
-				.attr("stroke","#000")
-				.attr("stroke-width","0.1rem");
-				var circles = svg.selectAll("circle").data(json.nodes).enter().append("circle");
+				.attr("stroke","#000");
+				var circles = circles_group.selectAll("circle").data(json.nodes).enter().append("circle");
 				var circleAttributes = circles
 				.attr("cx",function(d){return d.cx})
 				.attr("cy",function(d){return d.cy})
-				.attr("r",10)
+				.attr("r",5)
 				.attr("fill","#6495ed");							
 										
-				var texts = svg.selectAll("text").data(json.nodes).enter().append("text");						
+				var texts = circles_group.selectAll("text").data(json.nodes).enter().append("text");						
 				var textAttribute=texts
 				.attr("dx",function(d){return d.cx})
 				.attr("dy",function(d){return d.cy})
 				.text(function(d){return d.name})						
-				var lines = svg.selectAll("line").data(json.links).enter().append("line");						
+				var lines = circles_group.selectAll("line").data(json.links).enter().append("line");						
 				var lineAttribute=lines
 				.attr("x1",function(d){return d.x1})
 				.attr("y1",function(d){return d.y1})
 				.attr("x2",function(d){return d.x2})
 				.attr("y2",function(d){return d.y2})
-				.attr("stroke","#000")
-				.attr("stroke-width","0.1rem");				
-			})
+				.attr("fill","#000");				
+			});
+			function zoomed() {
+				d3.select(this).attr("transform", 
+					"translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+			}
 		}
 
 	});   
@@ -362,6 +366,7 @@ Ext.onReady(function() {
 										                	Ext.getCmp("cool").setVisible(true);
 										                	Ext.getCmp("temperature").setVisible(true);
 										                	Ext.getCmp("deep").setVisible(true);
+										                	Ext.getCmp("times").setVisible(true);
 										                	Ext.getCmp('save').setDisabled(false);
 										        }else if (newValue === 'ForceLayout'){
 										                	Ext.getCmp("speed").setVisible(true);  
@@ -371,6 +376,7 @@ Ext.onReady(function() {
 										                	Ext.getCmp("cool").setVisible(false);
 										                	Ext.getCmp("temperature").setVisible(false);
 										                	Ext.getCmp("deep").setVisible(false);
+										                	Ext.getCmp("times").setVisible(false);
 										                	Ext.getCmp('save').setDisabled(false);
 										        }else{
 										                	Ext.getCmp("speed").setVisible(false);  
@@ -380,6 +386,7 @@ Ext.onReady(function() {
 										                	Ext.getCmp("cool").setVisible(false);
 										                	Ext.getCmp("temperature").setVisible(false);
 										                	Ext.getCmp("deep").setVisible(false);
+										                	Ext.getCmp("times").setVisible(false);
 										                	Ext.getCmp('save').setDisabled(true);
 										         }//else
 								         }//change
@@ -401,9 +408,20 @@ Ext.onReady(function() {
 					               name: 'kvalue',
 					               id:'kvalue',
 					               fieldLabel: 'K 值',
-					               value: 5,
+					               value: 1,
 					               minValue: 1,
 					               maxValue: 50,
+					               allowBlank: false,
+					               hidden: true  
+					           },{
+					               xtype: 'numberfield',
+					               margin:10,
+					               name: 'times',
+					               id:'times',
+					               fieldLabel: 'Times',
+					               value: 200,
+					               minValue: 1,
+					               maxValue: 500,
 					               allowBlank: false,
 					               hidden: true  
 					           },{
@@ -419,6 +437,7 @@ Ext.onReady(function() {
 					                fieldLabel: 'Cool 值',
 					                name: 'cool',
 					                id: 'cool',
+					                value:0.95,
 					                margin:10,
 					                minValue: 1,
 					                maxValue: 100,
@@ -459,7 +478,7 @@ Ext.onReady(function() {
 						               name: 'deep',
 						               id: 'deep',
 						               fieldLabel: 'Deep 值',
-						               value: 5,
+						               value: 3,
 						               minValue: 1,
 						               maxValue: 50,
 						               allowBlank: false,
@@ -484,6 +503,7 @@ Ext.onReady(function() {
 					                        	    	forceThreshold:Ext.getCmp('forceThreshold').getValue(), 
 					                        	    	temperature:Ext.getCmp('temperature').getValue(), 
 					                        	    	deep:Ext.getCmp('deep').getValue(), 
+					                        	    	times:Ext.getCmp('times').getValue(), 
 					                        	    },
 					                        	    async: false,
 					                        	    success: function(response){
@@ -538,7 +558,7 @@ Ext.onReady(function() {
 			}]
 	});
 	function handleActivate() {
-		var dataroot="json.json"; 
+		var dataroot="data/json.json"; 
 		$.getJSON(dataroot, function(data){ 
 		   var node = data.nodes.length;
 		   var link = data.links.length/2;
