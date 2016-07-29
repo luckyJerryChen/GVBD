@@ -52,14 +52,17 @@ public class proData extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		String [] args={request.getParameter("number"),request.getParameter("avg"),request.getParameter("random")};
+		String nre = getServletContext().getRealPath("/dataSimple/");
+		String [] args={request.getParameter("number"),request.getParameter("avg"),request.getParameter("random"),nre};
 		generateData.generate(args);
-		DataConfig.setDataPath("dataSimple/random.txt");
+		DataConfig.setDataPath(nre+"\\random.txt");
 		BufferedReader br=new BufferedReader(new FileReader(new File(DataConfig.getDataPath())));
 		DataConfig.setDataReader(br);
 		DataConfig.setNodeFormat(new BSPNodeFormatImpl());
 		DataConfig.setNodeNum(Integer.parseInt(request.getParameter("number")));
+		
+		
+		
 //		response.setContentType("text/html");
 //		PrintWriter out = response.getWriter();
 //		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");

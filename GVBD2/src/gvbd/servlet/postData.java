@@ -65,6 +65,8 @@ public class postData extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		String nre = getServletContext().getRealPath("/data/");
 		System.out.println(request.getParameter("kvalue"));// k值
 		System.out.println(request.getParameter("title"));// 布局方式
 		System.out.println(request.getParameter("speed"));// 速度值
@@ -104,7 +106,7 @@ public class postData extends HttpServlet {
 
 			Layout layout = new ChengLayout(graphData.getGraph(), layoutConfig);
 			layout.doLayout();
-			Output.outputJson(graphData.getGraph());
+			Output.outputJson(graphData.getGraph(),nre);
 		}
 		// response.setContentType("text/html");
 		// PrintWriter out = response.getWriter();
