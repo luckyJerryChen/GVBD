@@ -17,7 +17,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class Output {
-	public static void outputJson(Graph graph){
+	public static void outputJson(Graph graph,String nre){
 
 		JSONObject jo = new JSONObject();
 		Node [] nodes=graph.getNodes();
@@ -50,7 +50,7 @@ public class Output {
 		JSONArray jaLink = JSONArray.fromObject(linkList);
 		jo.put("nodes", jaNode);
 		jo.put("links", jaLink);
-		File file=new File("./WebRoot/json5.json");
+		File file=new File(nre+"\\json.json");
 		FileOutputStream outStream=null;
 		try {
 			outStream=new FileOutputStream(file);
