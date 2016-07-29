@@ -42,6 +42,7 @@ Ext.onReady(function() {
                     type: 'vbox',
                     align: 'stretch'
                 },
+                enctype:'multipart/form-data',
                 fileUpload:true,
                 bodyPadding: 10,
                 items: [{
@@ -50,21 +51,17 @@ Ext.onReady(function() {
                     name: 'uploadfile',
                     inputType: 'file',
                     allowBlank: false
-                }, {
-                	id:"radiofield",
-                    xtype: 'radiofield',
-                    name: 'radio1',
-                    value: 'radiovalue1',
-                    fieldLabel: '参数设置',
-                    boxLabel: '1'
-                }, {
-                    xtype: 'radiofield',
-                    name: 'radio1',
-                    value: 'radiovalue2',
-                    fieldLabel: '',
-                    labelSeparator: '',
-                    hideEmptyLabel: false,
-                    boxLabel: '2'
+                },{
+                	xtype: 'numberfield',
+                	 id:'number1',
+                     fieldLabel: '顶点数',
+                     name: 'number',
+                     margin:'10 0 10 0',
+                     value: 1,
+                     minValue: 1,
+                     maxValue: 125,
+                     allowNegative:false,
+                     allowBlank: false
                 }],
 
                 buttons: [{
@@ -81,15 +78,22 @@ Ext.onReady(function() {
                         	
                         	Ext.Ajax.request({
                         	    url: 'servlet/importData',
-                        	    params: {uploadfile:Ext.getCmp('uploadfile').getValue(),radiofield:Ext.getCmp('radiofield').getValue()},
+                        	    params: {uploadfile:Ext.getCmp('uploadfile').getValue(),number:Ext.getCmp('number1').getValue()},
                         	    async: false,
                         	    success: function(response){
-                        	    	Ext.MessageBox.alert('Thank you!', 'Your inquiry has been sent. We will respond as soon as possible.');
+                        	    	Ext.MessageBox.alert('ok!','数据生成成功');
                         	    },
                         	    error:function(response){
-                        	    	Ext.MessageBox.alert('error!', 'Your inquiry has been sent. We will respond as soon as possible.');
+                        	    	Ext.MessageBox.alert('error!', '数据上传失败');
                         	    }
                         	});
+//                        	this.up('form').getForm().submit({
+//                                url: 'servlet/importData',
+//                                waitMsg: 'Uploading file...',
+//                                success: function(form,action){
+//                                    msg('Success', 'Processed file on the server');
+//                                }
+//                            });
                             this.up('form').getForm().reset();
                             this.up('window').hide();
                             
@@ -101,7 +105,7 @@ Ext.onReady(function() {
                 title: action,
                 closeAction: 'hide',
                 width: 200,
-                height: 200,
+                height: 150,
                 layout: 'fit',
                 resizable: true,
                 modal: true,
@@ -170,10 +174,10 @@ Ext.onReady(function() {
                         	    params: {avg:Ext.getCmp('avg').getValue(),number:Ext.getCmp('number').getValue(),random:Ext.getCmp('random').getValue()},
                         	    async: false,
                         	    success: function(response){
-                        	    	Ext.MessageBox.alert('Thank you!', 'Your inquiry has been sent. We will respond as soon as possible.');  
+                        	    	Ext.MessageBox.alert('ok!','数据生成成功');  
                         	    },
                         	    error:function(response){
-                        	    	Ext.MessageBox.alert('error!', 'Your inquiry has been sent. We will respond as soon as possible.');
+                        	    	Ext.MessageBox.alert('error!','数据生成失败');
                         	    }
                         	});
 
