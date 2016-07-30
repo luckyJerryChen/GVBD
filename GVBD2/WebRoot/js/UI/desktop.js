@@ -3,10 +3,15 @@ Ext.require([
     'Ext.tab.*',
     'Ext.tip.QuickTipManager'
 ]);
+
 Ext.onReady(function() {
 
     var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
     var win,import_val,production_val;
+    var match = window.location.href;
+    var s=match.indexOf("?"); 
+    var jsonfile=match.substring(s+1);// t就是?后面的东西了 
+    var datafile= 'data/'+jsonfile+'.json';
     // create the Data Store
     var store = Ext.create('Ext.data.Store', {
     	 // fields一定要明确指定type，这样有很多好处，比如filter能直接设为true，便会默认按照store-fields设置好的type来确定filter的类型。
@@ -27,7 +32,7 @@ Ext.onReady(function() {
         proxy: {
             // load using HTTP
             type: 'ajax',
-            url: 'data/json.json',
+            url: datafile,
             // the return will be XML, so lets set up a reader
             reader: {
             	root: "nodes"
@@ -37,70 +42,65 @@ Ext.onReady(function() {
   
     function importfun(action) {
         if (!import_val) {
-            var form = Ext.widget('form', {
-                layout: {
-                    type: 'vbox',
-                    align: 'stretch'
-                },
-                enctype:'multipart/form-data',
-                fileUpload:true,
-                bodyPadding: 10,
-                items: [{
-                	id:'uploadfile',
-                	xtype: 'textfield',
-                    name: 'uploadfile',
-                    inputType: 'file',
-                    allowBlank: false
-                },{
-                	xtype: 'numberfield',
-                	 id:'number1',
-                     fieldLabel: '顶点数',
-                     name: 'number',
-                     margin:'10 0 10 0',
-                     value: 1,
-                     minValue: 1,
-                     maxValue: 125,
-                     allowNegative:false,
-                     allowBlank: false
-                }],
-
-                buttons: [{
-                    text: '取消',
-                    handler: function() {
-                        this.up('form').getForm().reset();
-                        this.up('window').hide();
-                    }
-                }, {
-                    text: '提交',
-                    handler: function() {
-                        if (this.up('form').getForm().isValid()) {
-                        	console.log(Ext.getCmp('uploadfile').getValue());
-                        	
-                        	Ext.Ajax.request({
-                        	    url: 'servlet/importData',
-                        	    params: {uploadfile:Ext.getCmp('uploadfile').getValue(),number:Ext.getCmp('number1').getValue()},
-                        	    async: false,
-                        	    success: function(response){
-                        	    	Ext.MessageBox.alert('ok!','数据生成成功');
-                        	    },
-                        	    error:function(response){
-                        	    	Ext.MessageBox.alert('error!', '数据上传失败');
-                        	    }
-                        	});
-//                        	this.up('form').getForm().submit({
-//                                url: 'servlet/importData',
-//                                waitMsg: 'Uploading file...',
-//                                success: function(form,action){
-//                                    msg('Success', 'Processed file on the server');
-//                                }
-//                            });
-                            this.up('form').getForm().reset();
-                            this.up('window').hide();
-                            
-                        }
-                    }
-                }]
-            });
+        	 var uploadForm=new Ext.FormPanel({  
+        	        id:'uploadForm',  
+        	        width:520,  
+        	        frame:true,  
+        	        fileUpload: true,    
+        	        autoHeight:true,  
+        	        bodyStyle:'10px 10px 0px 10px',  
+        	        labelWidth:50,  
+        	        enctype: 'multipart/form-data',   
+        	        defaults:{  
+        	            anchor: '95%',  
+        	            allowBlank: false  
+        	        },  
+        	        items:[  
+        	            {  
+        	                xtype:'fileuploadfield',  
+        	                emptyText: '请选择上传文件...',   
+        	                fieldLabel: '文件：',   
+        	                id:'uploadFile',  
+        	                name: 'upload',   
+        	                allowBlank: false,     
+        	                blankText: '文件名称不能为空.',     
+        	                 buttonCfg: {  
+        	                            text: '选择...'// 上传文件时的本地查找按钮  
+        	                  }  
+        	            }  
+        	        ],  
+        	        buttons: [{  
+        	                        text: '上传',  
+        	                        handler: function(){  
+        	                            if(uploadForm.getForm().isValid()){  
+        	                                uploadForm.getForm().submit({  
+        	                                    url:'servlet/importData',  
+        	                                    method:'POST',  
+        	                                    waitTitle: '请稍后',  
+        	                                    waitMsg: '正在上传文档文件 ...',  
+        	                                    success: function(fp, action){  
+        	                                        Ext.MessageBox.alert('信息', action.result.msg);    
+        	                                        Ext.getCmp("uploadFile").reset();          // 指定文件字段的id清空其内容  
+        	                                        import_val.hide();  
+        	                                        //grid.store.load({params:{start : 0,limit : combo.value}});  
+        	                                    },  
+        	                                    failure: function(fp, action){  
+        	                                        Ext.MessageBox.alert('警告', action.result.msg);    
+        	                                        import_val.hide();  
+        	                                    }  
+        	                                });  
+        	                            }  
+        	                        }  
+        	                    },{  
+        	                        text: '重置',  
+        	                        handler: function(){  
+        	                            uploadForm.getForm().reset();  
+        	                        }  
+        	                    }]  
+        	          
+        	    });  
+        	      
+        	 
             import_val = Ext.widget('window', {
                 title: action,
                 closeAction: 'hide',
@@ -109,7 +109,7 @@ Ext.onReady(function() {
                 layout: 'fit',
                 resizable: true,
                 modal: true,
-                items: form
+                items: uploadForm
             });
         }
         import_val.show();
@@ -221,11 +221,11 @@ Ext.onReady(function() {
 		},
 		
 		drawMap : function() {
-			var width = 5000, height = 1000;
+			var width = 5000, height = 5000;
 		    var zoom = d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", zoomed); 
 		    var svg = d3.select("#" + this.id + "-body").append("svg").attr("width", width).attr("height", height);
 		    
-			d3.json("data/json.json", function(json){
+			d3.json(datafile, function(json){
 				var circles_group = svg.append("g").call(zoom);
 				var lines = circles_group.selectAll("line").data(json.links).enter().append("line");			
 				var lineAttribute=lines
@@ -435,10 +435,10 @@ Ext.onReady(function() {
 					                id: 'cool',
 					                value:0.95,
 					                margin:10,
-					                minValue: 1,
-					                maxValue: 100,
+					                minValue: 0,
+					                maxValue: 1,
 					                allowDecimals: true,
-					                decimalPrecision: 1,
+					                decimalPrecision: 2,
 					                step: 0.1,
 					                allowBlank: false,
 					                hidden: true  
@@ -504,6 +504,7 @@ Ext.onReady(function() {
 					                        	    async: false,
 					                        	    success: function(response){
 					                        	    	Ext.MessageBox.alert('Thank you!', 'Your inquiry has been sent. We will respond as soon as possible.');
+					                        	    	document.location.reload();
 					                        	    },
 					                        	    error:function(response){
 					                        	    	Ext.MessageBox.alert('error!', 'Your inquiry has been sent. We will respond as soon as possible.');
@@ -553,8 +554,8 @@ Ext.onReady(function() {
 			}]
 	});
 	function handleActivate() {
-		var dataroot="data/json.json"; 
-		$.getJSON(dataroot, function(data){ 
+		
+		$.getJSON(datafile, function(data){ 
 		   var node = data.nodes.length;
 		   var link = data.links.length/2;
 		   Ext.getCmp('datainfoid').body.update("顶点数为："+node+"<br />边数为："+link);

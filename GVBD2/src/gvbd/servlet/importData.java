@@ -81,22 +81,71 @@ public class importData extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8"); // 设置编码
-		String nre = request.getSession().getServletContext().getRealPath("/dataSimple/");
-		
-		String filepath = request.getParameter("uploadfile");//上传路径
-		String number = request.getParameter("number");//顶点数目
-
-		File file = new File(filepath);// 错误发生地
-		String filename = file.getName();// 获取上传的文件路径
-		
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		BufferedWriter writer = new BufferedWriter(new FileWriter(nre+"/"+filename));
-		int index;
-		while ((index = reader.read()) != -1) {
-			writer.write(index);
+		 response.setContentType("text/html;charset=utf-8"); 
+		int maxPostSize = 1000 * 1024 * 1024;
+		FileItemFactory factory = new DiskFileItemFactory();
+		ServletFileUpload servletFileUpload = new ServletFileUpload(factory);
+		servletFileUpload.setSizeMax(maxPostSize);
+		List fileItems;
+		try {
+			fileItems = servletFileUpload.parseRequest(request);
+			Iterator iter = fileItems.iterator();
+			while(iter.hasNext()){
+				FileItem item = (FileItem) iter.next();
+				System.out.println(item);
+				if (!item.isFormField()) {// 是文件
+					String realPath=request.getSession().getServletContext().getRealPath("");
+					String imgPath="/dataSimple/";
+					realPath=realPath+imgPath;
+					
+				   String fileName=item.getName();
+				   System.out.println(item.getInputStream());
+				   System.out.println(realPath+fileName);
+				   File file = new File(realPath+fileName); 
+				   if (file.exists()) { 
+					   file.delete(); 
+				   } 
+				   try {
+					item.write(file);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+				   PrintWriter out = response.getWriter();
+				  out.print("{success:true,msg:'"+imgPath+"',fileName:'"+fileName+"'}");
+				 out.flush();
+				 out.close();
+				   
+				}
+				
+			}
+		} catch (FileUploadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		reader.close();
-		writer.close();
+		
+
+		
+		
+		
+		
+//		String nre = request.getSession().getServletContext().getRealPath("/dataSimple/");
+//		
+//		String filepath = request.getParameter("uploadfile");//上传路径
+//		System.out.println(filepath);
+//		String number = request.getParameter("number");//顶点数目
+//
+//		File file = new File(filepath);// 错误发生地
+//		String filename = file.getName();// 获取上传的文件路径
+//		
+//		BufferedReader reader = new BufferedReader(new FileReader(file));
+//		BufferedWriter writer = new BufferedWriter(new FileWriter(nre+"/"+filename));
+//		int index;
+//		while ((index = reader.read()) != -1) {
+//			writer.write(index);
+//		}
+//		reader.close();
+//		writer.close();
 	}
 
 	/*
