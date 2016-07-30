@@ -54,6 +54,7 @@ public class generateData
       int count = rVertexCount.nextInt(EDGE_COUNT_RANDOM) + EDGE_COUNT_BASE;
       StringBuffer sb = new StringBuffer((rVertex.nextInt(VERTEX_COUNT)+1) + 
         EDGE_ID_WEIGHT_SPLIT + DEFAULT_EDGE_WEIGHT);
+     
       for (int j = 1; j < count; j++) {
         sb.append(EDGE_EDGE_SPLIT + (rVertex.nextInt(VERTEX_COUNT)+1) + 
           EDGE_ID_WEIGHT_SPLIT + DEFAULT_EDGE_WEIGHT);
@@ -67,6 +68,8 @@ public class generateData
       
       STATIC_VERTEX += 1;
       STATIC_EDGE += count;
+      
+      System.out.println(STATIC_EDGE);
       for (int i = 1; i < VERTEX_COUNT; i++)
       {
         count = rVertexCount.nextInt(EDGE_COUNT_RANDOM) + EDGE_COUNT_BASE;
@@ -83,6 +86,7 @@ public class generateData
         STATIC_VERTEX += 1;
         STATIC_EDGE += count;
       }
+      System.out.println("121321");
       bw.close();
       fw.close();
     }
