@@ -11,7 +11,7 @@ Ext.onReady(function() {
     var match = window.location.href;
     var s=match.indexOf("?"); 
     var jsonfile=match.substring(s+1);// t就是?后面的东西了 
-    var datafile= 'data/json.json';
+    var datafile= 'data/'+jsonfile+'.json';
     // create the Data Store
     var store = Ext.create('Ext.data.Store', {
     	 // fields一定要明确指定type，这样有很多好处，比如filter能直接设为true，便会默认按照store-fields设置好的type来确定filter的类型。
