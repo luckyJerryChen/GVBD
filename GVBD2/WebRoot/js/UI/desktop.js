@@ -79,26 +79,26 @@ Ext.onReady(function() {
         	                                        var grid  = this.gridpanel;
         	                                        console.log(grid);
         	                                        //grid.store.load({params:{start : 0,limit : combo.value}});  
-//        	                                        store = Ext.create('Ext.data.Store', {
-//        	                                           fields : [{
-//        	                                                     name : 'name',type : 'int'
-//        	                                                  },{
-//        	                                                     name : 'value',type : 'float'
-//        	                                                  }, {
-//        	                                                     name : 'cx',type : 'string'
-//        	                                                  }, {
-//        	                                                     name : 'cy',type : 'string'
-//        	                                                  }],
-//        	                                           autoLoad: true,
-//        	                                           proxy: {
-//        	                                               type: 'ajax',
-//        	                                               url: datafile,
-//        	                                               reader: {
-//        	                                               	root: "nodes"
-//        	                                               }
-//        	                                           }
-//        	                                       });
-//        	                                       store.reload();
+        	                                        store = Ext.create('Ext.data.Store', {
+        	                                           fields : [{
+        	                                                     name : 'name',type : 'int'
+        	                                                  },{
+        	                                                     name : 'value',type : 'float'
+        	                                                  }, {
+        	                                                     name : 'cx',type : 'string'
+        	                                                  }, {
+        	                                                     name : 'cy',type : 'string'
+        	                                                  }],
+        	                                           autoLoad: true,
+        	                                           proxy: {
+        	                                               type: 'ajax',
+        	                                               url: datafile,
+        	                                               reader: {
+        	                                               	root: "nodes"
+        	                                               }
+        	                                           }
+        	                                       });
+        	                                       store.reload();
         	                                        
         	                                    },  
         	                                    failure: function(fp, action){  
