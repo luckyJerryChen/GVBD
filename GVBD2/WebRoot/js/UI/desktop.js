@@ -14,32 +14,26 @@ Ext.onReady(function() {
     var datafile= 'data/'+jsonfile+'.json';
     // create the Data Store
     var store = Ext.create('Ext.data.Store', {
-    	 // fields一定要明确指定type，这样有很多好处，比如filter能直接设为true，便会默认按照store-fields设置好的type来确定filter的类型。
+    	
         fields : [{
-                  name : 'name',
-                  type : 'int'
-               },{
-                  name : 'value',
-                  type : 'float'
-               }, {
-                  name : 'cx',
-                  type : 'string'
-               }, {
-                  name : 'cy',
-                  type : 'string'
-               }],
-        autoLoad: true,
-        proxy: {
-            // load using HTTP
-            type: 'ajax',
-            url: datafile,
-            // the return will be XML, so lets set up a reader
-            reader: {
-            	root: "nodes"
-            }
-        }
-    });
-  
+            name : 'name',type : 'int'
+         },{
+            name : 'value',type : 'float'
+         }, {
+            name : 'cx',type : 'string'
+         }, {
+            name : 'cy',type : 'string'
+         }],
+		  autoLoad: true,
+		  proxy: {
+		      type: 'ajax',
+		      url: datafile,
+		      reader: {
+		      	root: "nodes"
+		      }
+		  }
+		});
+
     function importfun(action) {
         if (!import_val) {
         	 var uploadForm=new Ext.FormPanel({  
@@ -82,7 +76,30 @@ Ext.onReady(function() {
         	                                        Ext.MessageBox.alert('信息', action.result.msg);    
         	                                        Ext.getCmp("uploadFile").reset();          // 指定文件字段的id清空其内容  
         	                                        import_val.hide();  
+        	                                        var grid  = this.gridpanel;
+        	                                        console.log(grid);
         	                                        //grid.store.load({params:{start : 0,limit : combo.value}});  
+//        	                                        store = Ext.create('Ext.data.Store', {
+//        	                                           fields : [{
+//        	                                                     name : 'name',type : 'int'
+//        	                                                  },{
+//        	                                                     name : 'value',type : 'float'
+//        	                                                  }, {
+//        	                                                     name : 'cx',type : 'string'
+//        	                                                  }, {
+//        	                                                     name : 'cy',type : 'string'
+//        	                                                  }],
+//        	                                           autoLoad: true,
+//        	                                           proxy: {
+//        	                                               type: 'ajax',
+//        	                                               url: datafile,
+//        	                                               reader: {
+//        	                                               	root: "nodes"
+//        	                                               }
+//        	                                           }
+//        	                                       });
+//        	                                       store.reload();
+        	                                        
         	                                    },  
         	                                    failure: function(fp, action){  
         	                                        Ext.MessageBox.alert('警告', action.result.msg);    
@@ -130,6 +147,12 @@ Ext.onReady(function() {
                     labelStyle: 'font-weight:bold'
                 },
                 items: [{
+                    fieldLabel: '文件名称',
+                    afterLabelTextTpl: required,
+                    xtype:'textfield',
+                    name: 'name',
+                    allowBlank: false
+                },{
                 	xtype: 'numberfield',
                 	id:'number',
                      fieldLabel: '顶点数',
@@ -162,7 +185,7 @@ Ext.onReady(function() {
                 buttons: [{
                     text: '取消',
                     handler: function() {
-                        this.up('formimport').getForm().reset();
+                        this.up('form').getForm().reset();
                         this.up('window').hide();
                     }
                 }, {
@@ -192,7 +215,7 @@ Ext.onReady(function() {
                 title: action,
                 closeAction: 'hide',
                 width: 200,
-                height: 250,
+                height: 300,
                 layout: 'fit',
                 resizable: true,
                 modal: true,
@@ -224,7 +247,6 @@ Ext.onReady(function() {
 			var width = 5000, height = 5000;
 		    var zoom = d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", zoomed); 
 		    var svg = d3.select("#" + this.id + "-body").append("svg").attr("width", width).attr("height", height);
-		    
 			d3.json(datafile, function(json){
 				var circles_group = svg.append("g").call(zoom);
 				var lines = circles_group.selectAll("line").data(json.links).enter().append("line");			
@@ -239,8 +261,7 @@ Ext.onReady(function() {
 				.attr("cx",function(d){return d.cx})
 				.attr("cy",function(d){return d.cy})
 				.attr("r",5)
-				.attr("fill","#6495ed");							
-										
+				.attr("fill","#6495ed");
 				var texts = circles_group.selectAll("text").data(json.nodes).enter().append("text");						
 				var textAttribute=texts
 				.attr("dx",function(d){return d.cx})
@@ -315,7 +336,7 @@ Ext.onReady(function() {
 						xtype : 'gridpanel',
 						width : 291,
 						height : 400,
-						store: store,
+						store :store,
 						columns: [
 					                { header: 'Name',  dataIndex: 'name',width:40},
 					                { header: 'Value', dataIndex: 'value',width:50},
@@ -336,7 +357,7 @@ Ext.onReady(function() {
 					    items:[{
 					      	    width:          250,
 							    xtype:          'combo',
-							    margin:10,
+							    margin:         10,
 								value:          '请选择一种布局方法',
 								name:           'title',
 								id:           'title',
@@ -536,7 +557,7 @@ Ext.onReady(function() {
 								width : 200,
 								height : 400,
 								title : '统计',
-								html : '顶点数1<br/>边数：2',
+								html : '',
 							},{
 								xtype : 'panel',
 								id: 'analysisid',
