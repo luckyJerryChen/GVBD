@@ -7,6 +7,7 @@ Ext.require([
 Ext.onReady(function() {
 
     var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
+    var filename;
     var win,import_val,production_val;
     var match = window.location.href;
     var s=match.indexOf("?"); 
@@ -33,7 +34,21 @@ Ext.onReady(function() {
 		      }
 		  }
 		});
-
+    var store1 = Ext.create('Ext.data.Store', {
+    	fields : [{
+    		name:'id',type : 'int'
+    	},{
+    		name:'value',type : 'string'
+    	}],
+    	autoLoad: true,
+		  proxy: {
+		      type: 'ajax',
+		      url: 'servlet/getAlreadyData',
+		      reader: {
+			      	root: "data"
+			 }
+		  }  	
+    });
     function importfun(action) {
         if (!import_val) {
         	 var uploadForm=new Ext.FormPanel({  
@@ -49,19 +64,28 @@ Ext.onReady(function() {
         	            anchor: '95%',  
         	            allowBlank: false  
         	        },  
-        	        items:[  
-        	            {  
+        	        items:[{  
         	                xtype:'fileuploadfield',  
         	                emptyText: '请选择上传文件...',   
-        	                fieldLabel: '文件：',   
+        	                fieldLabel: '文件',   
         	                id:'uploadFile',  
         	                name: 'upload',   
         	                allowBlank: false,     
         	                blankText: '文件名称不能为空.',     
-        	                 buttonCfg: {  
+        	                buttonCfg: {  
         	                            text: '选择...'// 上传文件时的本地查找按钮  
-        	                  }  
-        	            }  
+        	                }  
+        	            },{
+        	            	xtype: 'numberfield',
+                       	    id:'number1',
+                            fieldLabel: '顶点数',
+                            name: 'number',
+                            value: 1,
+                            minValue: 1,
+                            maxValue: 125,
+                            allowNegative:false,
+                            allowBlank: false
+        	            } 
         	        ],  
         	        buttons: [{  
         	                        text: '上传',  
@@ -73,36 +97,15 @@ Ext.onReady(function() {
         	                                    waitTitle: '请稍后',  
         	                                    waitMsg: '正在上传文档文件 ...',  
         	                                    success: function(fp, action){  
-        	                                        Ext.MessageBox.alert('信息', action.result.msg);    
+        	                                       // Ext.MessageBox.alert('信息', action.result.msg);   
+        	                                    	filename = action['result']['fileName'].substring(0,action['result']['fileName'].indexOf("."));
+        	                                        Ext.MessageBox.alert('成功', '导入数据成功'); 
         	                                        Ext.getCmp("uploadFile").reset();          // 指定文件字段的id清空其内容  
         	                                        import_val.hide();  
         	                                        var grid  = this.gridpanel;
-        	                                        console.log(grid);
-        	                                        //grid.store.load({params:{start : 0,limit : combo.value}});  
-        	                                        store = Ext.create('Ext.data.Store', {
-        	                                           fields : [{
-        	                                                     name : 'name',type : 'int'
-        	                                                  },{
-        	                                                     name : 'value',type : 'float'
-        	                                                  }, {
-        	                                                     name : 'cx',type : 'string'
-        	                                                  }, {
-        	                                                     name : 'cy',type : 'string'
-        	                                                  }],
-        	                                           autoLoad: true,
-        	                                           proxy: {
-        	                                               type: 'ajax',
-        	                                               url: datafile,
-        	                                               reader: {
-        	                                               	root: "nodes"
-        	                                               }
-        	                                           }
-        	                                       });
-        	                                       store.reload();
-        	                                        
         	                                    },  
         	                                    failure: function(fp, action){  
-        	                                        Ext.MessageBox.alert('警告', action.result.msg);    
+        	                                        Ext.MessageBox.alert('警告', '导入数据失败');    
         	                                        import_val.hide();  
         	                                    }  
         	                                });  
@@ -148,13 +151,14 @@ Ext.onReady(function() {
                 },
                 items: [{
                     fieldLabel: '文件名称',
+                    id : 'filename',
                     afterLabelTextTpl: required,
                     xtype:'textfield',
                     name: 'name',
                     allowBlank: false
                 },{
                 	xtype: 'numberfield',
-                	id:'number',
+                	 id:'number',
                      fieldLabel: '顶点数',
                      name: 'number',
                      value: 1,
@@ -191,10 +195,11 @@ Ext.onReady(function() {
                 }, {
                     text: '提交',
                     handler: function() {
+                    	filename = Ext.getCmp('filename').getValue();
                         if (this.up('form').getForm().isValid()) {
                         	Ext.Ajax.request({
                         	    url: 'servlet/proData',
-                        	    params: {avg:Ext.getCmp('avg').getValue(),number:Ext.getCmp('number').getValue(),random:Ext.getCmp('random').getValue()},
+                        	    params: {avg:Ext.getCmp('avg').getValue(),filename:Ext.getCmp('filename').getValue(),number:Ext.getCmp('number').getValue(),random:Ext.getCmp('random').getValue()},
                         	    async: false,
                         	    success: function(response){
                         	    	Ext.MessageBox.alert('ok!','数据生成成功');  
@@ -203,7 +208,6 @@ Ext.onReady(function() {
                         	    	Ext.MessageBox.alert('error!','数据生成失败');
                         	    }
                         	});
-
                             this.up('form').getForm().reset();
                             this.up('window').hide();
                         }
@@ -224,7 +228,7 @@ Ext.onReady(function() {
         }
         production_val.show();
     }
-
+    
     
     Ext.define('EB.view.content.SingleView', {
 		extend : 'Ext.panel.Panel',
@@ -242,7 +246,6 @@ Ext.onReady(function() {
 			me.callParent(arguments);
 			me.drawMap();
 		},
-		
 		drawMap : function() {
 			var width = 5000, height = 5000;
 		    var zoom = d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", zoomed); 
@@ -333,6 +336,24 @@ Ext.onReady(function() {
 					split : true,
 					title : '数据操作',
 					items : [{
+					    width:          250,
+					    xtype:          'combo',
+					    height :        20,
+					    margin:         '5 10 5 10',
+					    emptyText:          '请选择一种已有数据集',
+						name:           'title',
+						id:           'title1',
+						displayField:   'value',
+						valueField:     'value',
+						fieldLabel: '数据集',
+						mode:'local',
+						store:store1,
+						listeners:{
+							'change':function(thisField,newValue,oldValue,epots){ 
+								  window.location.href="UI/desktop.jsp?"+newValue; 
+							   }
+							}
+				  },{
 						xtype : 'gridpanel',
 						width : 291,
 						height : 400,
@@ -344,7 +365,8 @@ Ext.onReady(function() {
 					                { header: 'CY', dataIndex: 'cy'}
 				                ],
 				     listeners: { 'itemclick': function (view, record, item, index, e) {
-				                    Ext.getCmp('analysisid').body.update("顶点数为：12<br />边数为：45");
+				                    Ext.getCmp('analysisid').body.update("所在行："+record.data.name+"<br /> " +
+				                    		"数据值："+record.data.value+"<br />坐标值：("+parseFloat(record.data.cx).toFixed(2)+","+parseFloat(record.data.cy).toFixed(2)+")");
 				                  }
 				      }
 					},{
@@ -358,7 +380,7 @@ Ext.onReady(function() {
 					      	    width:          250,
 							    xtype:          'combo',
 							    margin:         10,
-								value:          '请选择一种布局方法',
+							    emptyText:          '--请选择一种布局方法--',
 								name:           'title',
 								id:           'title',
 								displayField:   'name',
@@ -368,7 +390,6 @@ Ext.onReady(function() {
 								store:Ext.create('Ext.data.Store', {
 									fields : ['name', 'value'],
 									data   : [
-										   {name : '请选择一种布局方法',   value: '0'},
 										   {name : 'ChengLayout',   value: 'ChengLayout'},
 										   {name : 'ForceLayout',  value: 'ForceLayout'},
 										   ]
@@ -508,7 +529,7 @@ Ext.onReady(function() {
 						        	   width:100,
 						        	   disabled:true,
 						        	   handler: function() {
-						        		   if (this.up('form').getForm().isValid()) {
+						        		   if (this.up('form').getForm().isValid() && filename) {
 					                        	Ext.Ajax.request({
 					                        	    url: 'servlet/postData',
 					                        	    params: {
@@ -520,15 +541,20 @@ Ext.onReady(function() {
 					                        	    	forceThreshold:Ext.getCmp('forceThreshold').getValue(), 
 					                        	    	temperature:Ext.getCmp('temperature').getValue(), 
 					                        	    	deep:Ext.getCmp('deep').getValue(), 
-					                        	    	times:Ext.getCmp('times').getValue(), 
+					                        	    	times:Ext.getCmp('times').getValue(),
+					                        	    	filename:filename
 					                        	    },
 					                        	    async: false,
 					                        	    success: function(response){
-					                        	    	Ext.MessageBox.alert('Thank you!', 'Your inquiry has been sent. We will respond as soon as possible.');
-					                        	    	document.location.reload();
+					                        	    	Ext.MessageBox.alert('Ok!', '布局生产中,请稍后.');
+					                        	    	if(filename){
+					                        	    		window.location.href="UI/desktop.jsp?"+filename; 
+					                        	    	}else{
+					                        	    		document.location.reload();
+					                        	    	}
 					                        	    },
 					                        	    error:function(response){
-					                        	    	Ext.MessageBox.alert('error!', 'Your inquiry has been sent. We will respond as soon as possible.');
+					                        	    	Ext.MessageBox.alert('error!', '布局出错了.');
 					                        	    }
 					                        	});
 					                            this.up('form').getForm().reset();

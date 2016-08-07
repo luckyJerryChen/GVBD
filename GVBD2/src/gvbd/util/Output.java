@@ -27,7 +27,7 @@ public class Output {
 			Node node=nodes[i];
 			Map<String,String> nodeMap=new HashMap<String,String>();
 			nodeMap.put("name", node.getNodeName());
-			nodeMap.put("value",Float.toString(node.getNodeValue()));
+			nodeMap.put("value",node.getNodeValue());
 			nodeMap.put("cx", Double.toString(node.getNodeLayoutData().getX()));
 			nodeMap.put("cy", Double.toString(node.getNodeLayoutData().getY()));
 			nodeList.add(nodeMap);
@@ -50,7 +50,7 @@ public class Output {
 		JSONArray jaLink = JSONArray.fromObject(linkList);
 		jo.put("nodes", jaNode);
 		jo.put("links", jaLink);
-		File file=new File(nre+"\\json.json");
+		File file=new File(nre);
 		FileOutputStream outStream=null;
 		try {
 			outStream=new FileOutputStream(file);

@@ -75,6 +75,7 @@ public class postData extends HttpServlet {
 		System.out.println(request.getParameter("forceThreshold"));// forceThreshold值
 		System.out.println(request.getParameter("temperature"));// temperature值
 		System.out.println(request.getParameter("deep"));// deep值
+		System.out.println(request.getParameter("filename"));// 文件名值
 		int k = Integer.parseInt(request.getParameter("kvalue"));
 		String layoutMethod = request.getParameter("title");
 
@@ -106,21 +107,9 @@ public class postData extends HttpServlet {
 
 			Layout layout = new ChengLayout(graphData.getGraph(), layoutConfig);
 			layout.doLayout();
-			Output.outputJson(graphData.getGraph(),nre);
+			
+			Output.outputJson(graphData.getGraph(),nre+"\\"+request.getParameter("filename")+".json");
 		}
-		// response.setContentType("text/html");
-		// PrintWriter out = response.getWriter();
-		// out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		// out.println("<HTML>");
-		// out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
-		// out.println("  <BODY>");
-		// out.print("    This is ");
-		// out.print(this.getClass());
-		// out.println(", using the POST method");
-		// out.println("  </BODY>");
-		// out.println("</HTML>");
-		// out.flush();
-		// out.close();
 	}
 
 	/**

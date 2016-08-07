@@ -10,13 +10,14 @@ public class BSPNodeFormatImpl implements NodeFormat{
 	@Override
 	public Node stringToNode(String nodeStr){
 		int nodeId;
-		float nodeValue;
+		String nodeValue;
 		List<Edge> edges=new ArrayList<Edge>();
 		String temp[]=nodeStr.split("\t");
 		String nodeTemp[]=temp[0].split(":");
+		System.out.println("aaaaaaaaaaaaaa"+temp[0]);
 		String edgesTemp[]=temp[1].split(" ");
 		nodeId=Integer.parseInt(nodeTemp[0]);
-		nodeValue=Float.parseFloat(nodeTemp[1]);
+		nodeValue=nodeTemp[1];
 		
 		for(int i=0;i<edgesTemp.length;++i){
 			int resource;
@@ -28,7 +29,7 @@ public class BSPNodeFormatImpl implements NodeFormat{
 			weight =Float.parseFloat(edgeTemp[1]);
 			edges.add(new Edge(resource,target,weight));
 		}
-		return new Node(nodeId,Integer.toString(nodeId), null, 0f, edges);
+		return new Node(nodeId,Integer.toString(nodeId), null, nodeValue, edges);
 		
 	}
 
