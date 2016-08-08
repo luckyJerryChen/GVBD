@@ -169,7 +169,6 @@ Ext.onReady(function() {
                      name: 'number',
                      value: 1,
                      minValue: 1,
-                     maxValue: 125,
                      allowNegative:false,
                      allowBlank: false
                 },{
