@@ -91,7 +91,6 @@ Ext.onReady(function() {
                             name: 'number',
                             value: 1,
                             minValue: 1,
-                            maxValue: 125,
                             allowNegative:false,
                             allowBlank: false
         	            } 
@@ -463,7 +462,7 @@ Ext.onReady(function() {
 								 listeners:{
 										'change':function(thisField,newValue,oldValue,epots){  
 										        if(newValue === 'ChengLayout' ){
-										                	Ext.getCmp("speed").setVisible(false);  
+										                	Ext.getCmp("speed").setVisible(true);  
 										                	Ext.getCmp("kvalue").setVisible(true);  
 										                	Ext.getCmp("forceThreshold").setVisible(true); 
 										                	Ext.getCmp("isDirected").setVisible(true);
@@ -477,10 +476,10 @@ Ext.onReady(function() {
 										                	Ext.getCmp("kvalue").setVisible(true);  
 										                	Ext.getCmp("forceThreshold").setVisible(true); 
 										                	Ext.getCmp("isDirected").setVisible(true);
-										                	Ext.getCmp("cool").setVisible(false);
-										                	Ext.getCmp("temperature").setVisible(false);
+										                	Ext.getCmp("cool").setVisible(true);
+										                	Ext.getCmp("temperature").setVisible(true);
 										                	Ext.getCmp("deep").setVisible(false);
-										                	Ext.getCmp("times").setVisible(false);
+										                	Ext.getCmp("times").setVisible(true);
 										                	Ext.getCmp('save').setDisabled(false);
 										        }else{
 										                	Ext.getCmp("speed").setVisible(false);  
@@ -598,8 +597,6 @@ Ext.onReady(function() {
 						        	   handler: function() {
 						        		   console.log(filename);
 						        		   if (this.up('form').getForm().isValid() && filename) {
-
-
 					                        	Ext.Ajax.request({
 					                        	    url: 'servlet/postData',
 					                        	    params: {

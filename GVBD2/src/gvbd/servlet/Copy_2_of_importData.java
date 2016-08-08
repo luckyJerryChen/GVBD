@@ -25,7 +25,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-public class importData extends HttpServlet {
+public class Copy_2_of_importData extends HttpServlet {
 	File tmpDir = null;// 初始化上传文件的临时存放目录
 	File saveDir = null;// 初始化上传文件后的保存目录
 
@@ -37,7 +37,7 @@ public class importData extends HttpServlet {
 		// Put your code here
 	}
 
-	public importData() {
+	public Copy_2_of_importData() {
 		super();
 	}
 
@@ -88,17 +88,18 @@ public class importData extends HttpServlet {
 		try {
 			fileItems = servletFileUpload.parseRequest(request);
 			Iterator iter = fileItems.iterator();
-			String numbervalue = "";
 			while (iter.hasNext()) {
 				FileItem item = (FileItem) iter.next();
+				System.out.println(item);
 				if (!item.isFormField()) {// 是文件
 					String realPath = request.getSession().getServletContext()
 							.getRealPath("");
 					String imgPath = "/dataSimple/";
 					realPath = realPath + imgPath;
 					String fileName = item.getName();
+					System.out.println(item.getInputStream());
+					System.out.println(realPath + fileName);
 					File file = new File(realPath + fileName);
-					
 					if (file.exists()) {
 						file.delete();
 					}
@@ -108,27 +109,23 @@ public class importData extends HttpServlet {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					//System.out.println(numbervalue);
+					
 					DataConfig.setDataPath(realPath + fileName);
-					BufferedReader br = new BufferedReader(
-							new InputStreamReader(new FileInputStream(
-									DataConfig.getDataPath()), "utf-8"));
+					BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(DataConfig.getDataPath()),"utf-8"));
+					//System.out.println(br);
 					DataConfig.setDataReader(br);
 					DataConfig.setNodeFormat(new BSPNodeFormatImpl());
-					DataConfig.setNodeNum(Integer.parseInt(numbervalue));
+					DataConfig.setNodeNum(3142);
 					PrintWriter out = response.getWriter();
 					out.print("{success:true,msg:'" + imgPath + "',fileName:'"
 							+ fileName + "'}");
 					out.flush();
 					out.close();
 
-				} else {//识别的值
-					numbervalue= item.getString();
-					numbervalue = new String(numbervalue.getBytes());
 				}
 
 			}
-
+		
 		} catch (FileUploadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
