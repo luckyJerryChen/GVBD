@@ -1,31 +1,29 @@
 package gvbd.servlet;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import gvbd.config.DataConfig;
+import gvbd.data.BSPNodeFormatImpl;
+
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.fileupload.DefaultFileItemFactory;
-import org.apache.commons.fileupload.DiskFileUpload;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.util.Streams;
 
 public class importData extends HttpServlet {
 	File tmpDir = null;// 初始化上传文件的临时存放目录
@@ -81,7 +79,7 @@ public class importData extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8"); // 设置编码
-		 response.setContentType("text/html;charset=utf-8"); 
+		response.setContentType("text/html;charset=utf-8");
 		int maxPostSize = 1000 * 1024 * 1024;
 		FileItemFactory factory = new DiskFileItemFactory();
 		ServletFileUpload servletFileUpload = new ServletFileUpload(factory);
@@ -90,62 +88,67 @@ public class importData extends HttpServlet {
 		try {
 			fileItems = servletFileUpload.parseRequest(request);
 			Iterator iter = fileItems.iterator();
-			while(iter.hasNext()){
+			while (iter.hasNext()) {
 				FileItem item = (FileItem) iter.next();
 				System.out.println(item);
 				if (!item.isFormField()) {// 是文件
-					String realPath=request.getSession().getServletContext().getRealPath("");
-					String imgPath="/dataSimple/";
-					realPath=realPath+imgPath;
-					
-				   String fileName=item.getName();
-				   System.out.println(item.getInputStream());
-				   System.out.println(realPath+fileName);
-				   File file = new File(realPath+fileName); 
-				   if (file.exists()) { 
-					   file.delete(); 
-				   } 
-				   try {
-					item.write(file);
+					String realPath = request.getSession().getServletContext()
+							.getRealPath("");
+					String imgPath = "/dataSimple/";
+					realPath = realPath + imgPath;
+					String fileName = item.getName();
+					System.out.println(item.getInputStream());
+					System.out.println(realPath + fileName);
+					File file = new File(realPath + fileName);
+					if (file.exists()) {
+						file.delete();
+					}
+					try {
+						item.write(file);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} 
-				   PrintWriter out = response.getWriter();
-				  out.print("{success:true,msg:'"+imgPath+"',fileName:'"+fileName+"'}");
-				 out.flush();
-				 out.close();
-				   
+					}
+					
+					DataConfig.setDataPath(realPath + fileName);
+					BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(DataConfig.getDataPath()),"utf-8"));
+					DataConfig.setDataReader(br);
+					DataConfig.setNodeFormat(new BSPNodeFormatImpl());
+					DataConfig.setNodeNum(3142);
+					PrintWriter out = response.getWriter();
+					out.print("{success:true,msg:'" + imgPath + "',fileName:'"
+							+ fileName + "'}");
+					out.flush();
+					out.close();
+
 				}
-				
+
 			}
+		
 		} catch (FileUploadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
-		
-		
-		
-		
-//		String nre = request.getSession().getServletContext().getRealPath("/dataSimple/");
-//		
-//		String filepath = request.getParameter("uploadfile");//上传路径
-//		System.out.println(filepath);
-//		String number = request.getParameter("number");//顶点数目
-//
-//		File file = new File(filepath);// 错误发生地
-//		String filename = file.getName();// 获取上传的文件路径
-//		
-//		BufferedReader reader = new BufferedReader(new FileReader(file));
-//		BufferedWriter writer = new BufferedWriter(new FileWriter(nre+"/"+filename));
-//		int index;
-//		while ((index = reader.read()) != -1) {
-//			writer.write(index);
-//		}
-//		reader.close();
-//		writer.close();
+		// String nre =
+		// request.getSession().getServletContext().getRealPath("/dataSimple/");
+		//
+		// String filepath = request.getParameter("uploadfile");//上传路径
+		// System.out.println(filepath);
+		// String number = request.getParameter("number");//顶点数目
+		//
+		// File file = new File(filepath);// 错误发生地
+		// String filename = file.getName();// 获取上传的文件路径
+		//
+		// BufferedReader reader = new BufferedReader(new FileReader(file));
+		// BufferedWriter writer = new BufferedWriter(new
+		// FileWriter(nre+"/"+filename));
+		// int index;
+		// while ((index = reader.read()) != -1) {
+		// writer.write(index);
+		// }
+		// reader.close();
+		// writer.close();
 	}
 
 	/*

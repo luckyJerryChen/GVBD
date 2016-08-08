@@ -33,7 +33,7 @@ public class generateData
     VERTEX_COUNT = Integer.parseInt(args[0]);
     EDGE_COUNT_BASE=Integer.parseInt(args[1]);
     EDGE_COUNT_RANDOM=Integer.parseInt(args[2]);
-    OUTPUT_PATH = args[3]+"\\random.txt";
+    OUTPUT_PATH = args[3]+"\\"+args[4]+".txt";
     System.out.println(OUTPUT_PATH);
     Random rVertex = new Random();
     Random rVertexCount = new Random();

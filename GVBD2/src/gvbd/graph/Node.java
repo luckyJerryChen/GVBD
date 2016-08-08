@@ -9,15 +9,15 @@ public class Node {
 	private int nodeId;
 	private String nodeName;
 	private String nodeLabel;
-	private float nodeValue;
+	private String nodeValue;
 	private NodeLayoutData nodeLayoutData;
 	private List<Edge> edges;
 	private List<Edge> edges2;
 	private Map<Edge,Float> edge3;
 	
 	
-	
-	public Node(int nodeId, String nodeName, String nodeLabel,float nodeValue, List<Edge> edges ) {
+
+	public Node(int nodeId, String nodeName, String nodeLabel,String nodeValue, List<Edge> edges ) {
 		this.nodeId = nodeId;
 		this.nodeName = nodeName;
 		this.nodeLabel = nodeLabel;
@@ -70,10 +70,10 @@ public class Node {
 	public void setEdges(List<Edge> edges) {
 		this.edges = edges;
 	}
-	public float getNodeValue() {
+	public String getNodeValue() {
 		return nodeValue;
 	}
-	public void setNodeValue(float nodeValue) {
+	public void setNodeValue(String nodeValue) {
 		this.nodeValue = nodeValue;
 	}
 	public NodeLayoutData getNodeLayoutData() {
