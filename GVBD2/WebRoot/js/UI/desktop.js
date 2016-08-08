@@ -91,7 +91,6 @@ Ext.onReady(function() {
                             name: 'number',
                             value: 1,
                             minValue: 1,
-                            maxValue: 125,
                             allowNegative:false,
                             allowBlank: false
         	            } 
@@ -105,14 +104,11 @@ Ext.onReady(function() {
         	                                    method:'POST',  
         	                                    waitTitle: '请稍后',  
         	                                    waitMsg: '正在上传文档文件 ...',  
-        	                                    success: function(fp, action){  
-        	                                       // Ext.MessageBox.alert('信息', action.result.msg);   
+        	                                    success: function(fp, action){   
         	                                    	filename = action['result']['fileName'].substring(0,action['result']['fileName'].indexOf("."));
-        	                                    	
         	                                    	Ext.MessageBox.alert('成功', '导入数据成功'); 
         	                                        Ext.getCmp("uploadFile").reset();          // 指定文件字段的id清空其内容  
-        	                                        import_val.hide();  
-        	                                        var grid  = this.gridpanel;
+        	                                        import_val.hide();
         	                                    },  
         	                                    failure: function(fp, action){  
         	                                        Ext.MessageBox.alert('警告', '导入数据失败');    
@@ -463,9 +459,9 @@ Ext.onReady(function() {
 								 listeners:{
 										'change':function(thisField,newValue,oldValue,epots){  
 										        if(newValue === 'ChengLayout' ){
-										                	Ext.getCmp("speed").setVisible(false);  
+										                	Ext.getCmp("speed").setVisible(true);  
 										                	Ext.getCmp("kvalue").setVisible(true);  
-										                	Ext.getCmp("forceThreshold").setVisible(true); 
+										                	
 										                	Ext.getCmp("isDirected").setVisible(true);
 										                	Ext.getCmp("cool").setVisible(true);
 										                	Ext.getCmp("temperature").setVisible(true);
@@ -475,17 +471,17 @@ Ext.onReady(function() {
 										        }else if (newValue === 'FRLayout'){
 										                	Ext.getCmp("speed").setVisible(true);  
 										                	Ext.getCmp("kvalue").setVisible(true);  
-										                	Ext.getCmp("forceThreshold").setVisible(true); 
+										                
 										                	Ext.getCmp("isDirected").setVisible(true);
-										                	Ext.getCmp("cool").setVisible(false);
-										                	Ext.getCmp("temperature").setVisible(false);
+										                	Ext.getCmp("cool").setVisible(true);
+										                	Ext.getCmp("temperature").setVisible(true);
 										                	Ext.getCmp("deep").setVisible(false);
-										                	Ext.getCmp("times").setVisible(false);
+										                	Ext.getCmp("times").setVisible(true);
 										                	Ext.getCmp('save').setDisabled(false);
 										        }else{
 										                	Ext.getCmp("speed").setVisible(false);  
 										                	Ext.getCmp("kvalue").setVisible(false);  
-										                	Ext.getCmp("forceThreshold").setVisible(false); 
+										                	
 										                	Ext.getCmp("isDirected").setVisible(false);
 										                	Ext.getCmp("cool").setVisible(false);
 										                	Ext.getCmp("temperature").setVisible(false);
@@ -552,20 +548,6 @@ Ext.onReady(function() {
 					                hidden: true  
 					            },{
 					                xtype: 'numberfield',
-					                fieldLabel: 'ForceThreshold',
-					                name: 'forceThreshold',
-					                id: 'forceThreshold',
-					                margin:10,
-					                value:1,
-					                minValue: 1,
-					               
-					                allowDecimals: true,
-					                decimalPrecision: 1,
-					                step: 0.1,
-					                allowBlank: false,
-					                hidden: true  
-					            },{
-					                xtype: 'numberfield',
 					                fieldLabel: 'Temperature',
 					                name: 'temperature',
 					                id: 'temperature',
@@ -598,8 +580,6 @@ Ext.onReady(function() {
 						        	   handler: function() {
 						        		   console.log(filename);
 						        		   if (this.up('form').getForm().isValid() && filename) {
-
-
 					                        	Ext.Ajax.request({
 					                        	    url: 'servlet/postData',
 					                        	    params: {
@@ -608,7 +588,6 @@ Ext.onReady(function() {
 					                        	    	kvalue:Ext.getCmp('kvalue').getValue(),
 					                        	    	isDirected:Ext.getCmp('isDirected').getValue(),  
 					                        	    	cool:Ext.getCmp('cool').getValue(), 
-					                        	    	forceThreshold:Ext.getCmp('forceThreshold').getValue(), 
 					                        	    	temperature:Ext.getCmp('temperature').getValue(), 
 					                        	    	deep:Ext.getCmp('deep').getValue(), 
 					                        	    	times:Ext.getCmp('times').getValue(),
