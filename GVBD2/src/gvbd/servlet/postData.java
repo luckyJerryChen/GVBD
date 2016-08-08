@@ -116,7 +116,7 @@ public class postData extends HttpServlet {
 		}
 		if (layoutMethod.equals("FRLayout")) {
 			 
-			
+			System.out.println("FRLayout");
 			
 			
 			FRLayoutConfig layoutConfig = new FRLayoutConfig();
@@ -151,6 +151,8 @@ public class postData extends HttpServlet {
 			layout.doLayout();
 			
 			Output.outputJson(graphData.getGraph(),nre+"\\"+request.getParameter("filename")+".json");
+			System.out.println("FRLayout--end");
+			
 		}
 	}
 
