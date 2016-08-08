@@ -29,27 +29,13 @@ Ext.onReady(function() {
 		  remoteSort: true,  
 		  pageSize: 15,
 		  proxy: {
-		      type: 'pagingmemory',
-//		      data: [  
-//                     { 'name': 'ALisa',  "value":"lisa@simpsons.com",  "cx":"555-111-1224"  },  
-//                     { 'name': 'Bart',  "value":"bart@simpsons.com",  "cx":"555-222-1234" },  
-//                     { 'name': 'Homer', "value":"home@simpsons.com",  "cx":"555-222-1244"  },  
-//                     { 'name': 'Marge', "value":"marge@simpsons.com", "cx":"555-222-1254"  },  
-//                     { 'name': 'Lisa',  "value":"lisa@simpsons.com",  "cx":"555-111-1224"  },  
-//                     { 'name': 'Bart',  "value":"bart@simpsons.com",  "cx":"555-222-1234" },  
-//                     { 'name': 'Homer', "value":"home@simpsons.com",  "cx":"555-222-1244"  },  
-//                     { 'name': 'Lisa',  "value":"lisa@simpsons.com",  "cx":"555-111-1224"  },  
-//                     { 'name': 'Bart',  "value":"bart@simpsons.com",  "cx":"555-222-1234" },  
-//                     { 'name': 'Homer', "value":"home@simpsons.com",  "cx":"555-222-1244"  },  
-//                     { 'name': 'Marge', "value":"marge@simpsons.com", "cx":"555-222-1254"  }  
-//                     ]  ,
+		      type: 'ajax',
 		      url: datafile,
 		      reader: {
 		      	root: "nodes",
 		      }
 		  }
 		});
-    store.loadPage(1)
     var pager = Ext.create("Ext.PagingToolbar", {
         //重要，指定分页所使用的store
         store:store,
@@ -105,6 +91,7 @@ Ext.onReady(function() {
                             name: 'number',
                             value: 1,
                             minValue: 1,
+                            maxValue: 125,
                             allowNegative:false,
                             allowBlank: false
         	            } 
@@ -121,7 +108,8 @@ Ext.onReady(function() {
         	                                    success: function(fp, action){  
         	                                       // Ext.MessageBox.alert('信息', action.result.msg);   
         	                                    	filename = action['result']['fileName'].substring(0,action['result']['fileName'].indexOf("."));
-        	                                        Ext.MessageBox.alert('成功', '导入数据成功'); 
+        	                                    	
+        	                                    	Ext.MessageBox.alert('成功', '导入数据成功'); 
         	                                        Ext.getCmp("uploadFile").reset();          // 指定文件字段的id清空其内容  
         	                                        import_val.hide();  
         	                                        var grid  = this.gridpanel;
@@ -185,6 +173,7 @@ Ext.onReady(function() {
                      name: 'number',
                      value: 1,
                      minValue: 1,
+                     maxValue: 125,
                      allowNegative:false,
                      allowBlank: false
                 },{
@@ -269,10 +258,14 @@ Ext.onReady(function() {
 		},
 		drawMap : function() {
 			var width = 5000, height = 5000;
-		    var zoom = d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", zoomed); 
+			
+		   // var zoom = d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", zoomed); 
 		    var svg = d3.select("#" + this.id + "-body").append("svg").attr("width", width).attr("height", height);
+		    transform = d3.zoomIdentity;
+		    
+		   // var points = d3.range(2000).map(phyllotaxis(10));
 			d3.json(datafile, function(json){
-				var circles_group = svg.append("g").call(zoom).on("mouseover", mouseover) ;
+				var circles_group = svg.append("g");
 				var lines = circles_group.selectAll("line").data(json.links).enter().append("line");			
 				var lineAttribute=lines
 				.attr("x1",function(d){return d.x1})
@@ -284,39 +277,75 @@ Ext.onReady(function() {
 				var circleAttributes = circles
 				.attr("cx",function(d){return d.cx})
 				.attr("cy",function(d){return d.cy})
-				.attr("r",5)
+				.attr("r",10)
+				.on("click", clicked)
 				.attr("fill","#6495ed");
-				var texts = circles_group.selectAll("text").data(json.nodes).enter().append("text");						
-				var textAttribute=texts
-				.attr("dx",function(d){return d.cx})
-				.attr("dy",function(d){return d.cy})
-				.text(function(d){return d.value})						
+				
+				circles.append("title")
+				.text(function(d){return d.value})
+				
+				
+//				var texts = circles_group.selectAll("text").data(json.nodes).enter().append("text");						
+//				var textAttribute=texts
+//				.attr("dx",function(d){return d.cx})
+//				.attr("dy",function(d){return d.cy})
+//				.style("text-anchor", "middle")
+//				.attr("font-size",5)
+//				.text(function(d){return d.value})						
 				var lines = circles_group.selectAll("line").data(json.links).enter().append("line");						
 				var lineAttribute=lines
 				.attr("x1",function(d){return d.x1})
 				.attr("y1",function(d){return d.y1})
 				.attr("x2",function(d){return d.x2})
 				.attr("y2",function(d){return d.y2})
-				.attr("fill","#000");				
+				.attr("fill","#000");		
+
+				svg.call(d3.zoom()
+			    	    .scaleExtent([1 / 8, 8])
+			    	    .on("zoom", zoomed));
+				function clicked(d, i){
+					console.log(d);
+					Ext.getCmp('datainfoid').body.update("顶点数为："+d.value+"<br />边数为："+i);
+					console.log(i);
+				}
+			    function zoomed() {
+			    	circles_group.attr("transform", d3.event.transform);
+			    }
+
+			    function dragged(d) {
+			    	  d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+			    }
+
+			   function phyllotaxis(radius) {
+			    	  var theta = Math.PI * (3 - Math.sqrt(5));
+			    	  return function(i) {
+			    	    var r = radius * Math.sqrt(i), a = theta * i;
+			    	    return {
+			    	      x: width / 2 + r * Math.cos(a),
+			    	      y: height / 2 + r * Math.sin(a)
+			    	    };
+			    	  };
+			   }
 			});
-			function zoomed() {
-				d3.select(this).attr("transform", 
-					"translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-			}
-			//设置圆点的半径，圆点的度越大weight属性值越大，可以对其做一点数学变换                               
-			function  radius (d){   
-			if(!d.weight){//节点weight属性没有值初始化为1（一般就是叶子了）  
-			d.weight=1;  
-			}                                                
-			    return Math.log(d.weight)*10;                                     
-			}    
-		    function mouseover() {  
-		        d3.select(this).select("circle").transition()  
-		            .duration(750)  
-		            .attr("r", function(d){  //设置圆点半径                        
-		          return radius (d)+10;                            
-		       }) ;  
-		      }  
+			
+//			function zoomed() {
+//				d3.select(this).attr("transform", 
+//					"translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+//			}
+//			//设置圆点的半径，圆点的度越大weight属性值越大，可以对其做一点数学变换                               
+//			function  radius (d){   
+//			if(!d.weight){//节点weight属性没有值初始化为1（一般就是叶子了）  
+//			d.weight=1;  
+//			}                                                
+//			    return Math.log(d.weight)*10;                                     
+//			}    
+//		    function mouseover() {  
+//		        d3.select(this).select("circle").transition()  
+//		            .duration(750)  
+//		            .attr("r", function(d){  //设置圆点半径                        
+//		          return radius (d)+10;                            
+//		       }) ;  
+//		      }  
 		}
 
 	});   
@@ -428,7 +457,7 @@ Ext.onReady(function() {
 									fields : ['name', 'value'],
 									data   : [
 										   {name : 'ChengLayout',   value: 'ChengLayout'},
-										   {name : 'ForceLayout',  value: 'ForceLayout'},
+										   {name : 'FRLayout',  value: 'FRLayout'},
 										   ]
 								  }),
 								 listeners:{
@@ -443,7 +472,7 @@ Ext.onReady(function() {
 										                	Ext.getCmp("deep").setVisible(true);
 										                	Ext.getCmp("times").setVisible(true);
 										                	Ext.getCmp('save').setDisabled(false);
-										        }else if (newValue === 'ForceLayout'){
+										        }else if (newValue === 'FRLayout'){
 										                	Ext.getCmp("speed").setVisible(true);  
 										                	Ext.getCmp("kvalue").setVisible(true);  
 										                	Ext.getCmp("forceThreshold").setVisible(true); 
@@ -527,8 +556,9 @@ Ext.onReady(function() {
 					                name: 'forceThreshold',
 					                id: 'forceThreshold',
 					                margin:10,
+					                value:1,
 					                minValue: 1,
-					                maxValue: 100,
+					               
 					                allowDecimals: true,
 					                decimalPrecision: 1,
 					                step: 0.1,
@@ -541,7 +571,7 @@ Ext.onReady(function() {
 					                id: 'temperature',
 					                margin:10,
 					                minValue: 1,
-					                maxValue: 100,
+					                value:1,
 					                allowDecimals: true,
 					                decimalPrecision: 1,
 					                step: 0.1,
@@ -555,7 +585,7 @@ Ext.onReady(function() {
 						               fieldLabel: 'Deep 值',
 						               value: 3,
 						               minValue: 1,
-						               maxValue: 50,
+						               value:1,
 						               allowBlank: false,
 						               hidden: true  
 						           },{
@@ -566,7 +596,10 @@ Ext.onReady(function() {
 						        	   width:100,
 						        	   disabled:true,
 						        	   handler: function() {
+						        		   console.log(filename);
 						        		   if (this.up('form').getForm().isValid() && filename) {
+
+
 					                        	Ext.Ajax.request({
 					                        	    url: 'servlet/postData',
 					                        	    params: {
