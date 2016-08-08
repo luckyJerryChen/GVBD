@@ -28,8 +28,10 @@ public class Output {
 			Map<String,String> nodeMap=new HashMap<String,String>();
 			nodeMap.put("name", node.getNodeName());
 			nodeMap.put("value",node.getNodeValue());
+			
 			nodeMap.put("cx", Double.toString(node.getNodeLayoutData().getX()));
 			nodeMap.put("cy", Double.toString(node.getNodeLayoutData().getY()));
+			if(i == 0)System.out.println(nodeMap);
 			nodeList.add(nodeMap);
 			List<Edge> edges=node.getEdges();
 			Iterator<Edge> edgesIt=node.getEdges().iterator();
@@ -54,7 +56,7 @@ public class Output {
 		FileOutputStream outStream=null;
 		try {
 			outStream=new FileOutputStream(file);
-			outStream.write(jo.toString().getBytes());
+			outStream.write(jo.toString().getBytes("utf-8"));
 			outStream.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

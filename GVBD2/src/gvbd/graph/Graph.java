@@ -33,7 +33,7 @@ public class Graph {
 	public void printNode(){
 		for(int i=0;i<this.getNodes().length;++i){
 			Node node=this.nodes[i];
-			System.out.println("id:"+node+" x:"+node.getNodeLayoutData().getX()+"  y:"+node.getNodeLayoutData().getY());
+			//System.out.println("id:"+node+" x:"+node.getNodeLayoutData().getX()+"  y:"+node.getNodeLayoutData().getY());
 		}
 	}
 

@@ -112,6 +112,7 @@ public class importData extends HttpServlet {
 					
 					DataConfig.setDataPath(realPath + fileName);
 					BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream(DataConfig.getDataPath()),"utf-8"));
+					//System.out.println(br);
 					DataConfig.setDataReader(br);
 					DataConfig.setNodeFormat(new BSPNodeFormatImpl());
 					DataConfig.setNodeNum(3142);
