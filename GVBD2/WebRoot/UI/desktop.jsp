@@ -22,6 +22,7 @@
 <script type="text/javascript" charset="UTF-8"	src="js/extjs/ext-lang-zh_CN.js"></script>
 <script type="text/javascript" charset="UTF-8" src="js/UI/desktop.js"></script>
 <script type="text/javascript" src="js/UI/jquery-1.8.0.js"></script></head>
+<script type="text/javascript" src="js/extjs/examples/ux/data/PagingMemoryProxy.js"></script>
 <body>
 </body>
 </html>

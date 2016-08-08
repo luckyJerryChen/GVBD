@@ -102,6 +102,7 @@ public class postData extends HttpServlet {
 					.getParameter("temperature")));
 
 			GraphData graphData = new GraphData();
+			
 			graphData.loadNodeData(DataConfig.getDataReader(),
 					DataConfig.getNodeFormat(), DataConfig.getNodeNum());
 

@@ -22,6 +22,7 @@ public class GraphData {
 		int lineNo=0;
 		try {
 			nodeLine = nodeDataReader.readLine();
+			if(lineNo == 0)System.out.println(nodeLine);
 			while (nodeLine != null) {
 				Node node = nodeFormat.stringToNode(nodeLine);
 				nodes[lineNo++]=node;

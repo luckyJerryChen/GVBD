@@ -1,7 +1,8 @@
 Ext.require([
     'Ext.form.*',
     'Ext.tab.*',
-    'Ext.tip.QuickTipManager'
+    'Ext.tip.QuickTipManager',
+    'Ext.PagingToolbar'
 ]);
 
 Ext.onReady(function() {
@@ -15,25 +16,47 @@ Ext.onReady(function() {
     var datafile= 'data/'+jsonfile+'.json';
     // create the Data Store
     var store = Ext.create('Ext.data.Store', {
-    	
         fields : [{
             name : 'name',type : 'int'
          },{
-            name : 'value',type : 'float'
+            name : 'value',type : 'string'
          }, {
             name : 'cx',type : 'string'
          }, {
             name : 'cy',type : 'string'
          }],
-		  autoLoad: true,
+		  autoLoad: true, 
+		  remoteSort: true,  
+		  pageSize: 15,
 		  proxy: {
-		      type: 'ajax',
+		      type: 'pagingmemory',
+//		      data: [  
+//                     { 'name': 'ALisa',  "value":"lisa@simpsons.com",  "cx":"555-111-1224"  },  
+//                     { 'name': 'Bart',  "value":"bart@simpsons.com",  "cx":"555-222-1234" },  
+//                     { 'name': 'Homer', "value":"home@simpsons.com",  "cx":"555-222-1244"  },  
+//                     { 'name': 'Marge', "value":"marge@simpsons.com", "cx":"555-222-1254"  },  
+//                     { 'name': 'Lisa',  "value":"lisa@simpsons.com",  "cx":"555-111-1224"  },  
+//                     { 'name': 'Bart',  "value":"bart@simpsons.com",  "cx":"555-222-1234" },  
+//                     { 'name': 'Homer', "value":"home@simpsons.com",  "cx":"555-222-1244"  },  
+//                     { 'name': 'Lisa',  "value":"lisa@simpsons.com",  "cx":"555-111-1224"  },  
+//                     { 'name': 'Bart',  "value":"bart@simpsons.com",  "cx":"555-222-1234" },  
+//                     { 'name': 'Homer', "value":"home@simpsons.com",  "cx":"555-222-1244"  },  
+//                     { 'name': 'Marge', "value":"marge@simpsons.com", "cx":"555-222-1254"  }  
+//                     ]  ,
 		      url: datafile,
 		      reader: {
-		      	root: "nodes"
+		      	root: "nodes",
 		      }
 		  }
 		});
+    store.loadPage(1)
+    var pager = Ext.create("Ext.PagingToolbar", {
+        //重要，指定分页所使用的store
+        store:store,
+        displayInfo:true,
+        displayMsg:"第 {0}-{1}条 / 共 {2} 条",
+        emptyMsg:"暂无记录"
+    })
     var store1 = Ext.create('Ext.data.Store', {
     	fields : [{
     		name:'id',type : 'int'
@@ -82,7 +105,6 @@ Ext.onReady(function() {
                             name: 'number',
                             value: 1,
                             minValue: 1,
-                            maxValue: 125,
                             allowNegative:false,
                             allowBlank: false
         	            } 
@@ -163,7 +185,6 @@ Ext.onReady(function() {
                      name: 'number',
                      value: 1,
                      minValue: 1,
-                     maxValue: 125,
                      allowNegative:false,
                      allowBlank: false
                 },{
@@ -251,7 +272,7 @@ Ext.onReady(function() {
 		    var zoom = d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", zoomed); 
 		    var svg = d3.select("#" + this.id + "-body").append("svg").attr("width", width).attr("height", height);
 			d3.json(datafile, function(json){
-				var circles_group = svg.append("g").call(zoom);
+				var circles_group = svg.append("g").call(zoom).on("mouseover", mouseover) ;
 				var lines = circles_group.selectAll("line").data(json.links).enter().append("line");			
 				var lineAttribute=lines
 				.attr("x1",function(d){return d.x1})
@@ -269,7 +290,7 @@ Ext.onReady(function() {
 				var textAttribute=texts
 				.attr("dx",function(d){return d.cx})
 				.attr("dy",function(d){return d.cy})
-				.text(function(d){return d.name})						
+				.text(function(d){return d.value})						
 				var lines = circles_group.selectAll("line").data(json.links).enter().append("line");						
 				var lineAttribute=lines
 				.attr("x1",function(d){return d.x1})
@@ -282,6 +303,20 @@ Ext.onReady(function() {
 				d3.select(this).attr("transform", 
 					"translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 			}
+			//设置圆点的半径，圆点的度越大weight属性值越大，可以对其做一点数学变换                               
+			function  radius (d){   
+			if(!d.weight){//节点weight属性没有值初始化为1（一般就是叶子了）  
+			d.weight=1;  
+			}                                                
+			    return Math.log(d.weight)*10;                                     
+			}    
+		    function mouseover() {  
+		        d3.select(this).select("circle").transition()  
+		            .duration(750)  
+		            .attr("r", function(d){  //设置圆点半径                        
+		          return radius (d)+10;                            
+		       }) ;  
+		      }  
 		}
 
 	});   
@@ -355,12 +390,12 @@ Ext.onReady(function() {
 							}
 				  },{
 						xtype : 'gridpanel',
-						width : 291,
+						width : 380,
 						height : 400,
 						store :store,
 						columns: [
 					                { header: 'Name',  dataIndex: 'name',width:40},
-					                { header: 'Value', dataIndex: 'value',width:50},
+					                { header: 'Value', dataIndex: 'value',width:120},
 					                { header: 'CX', dataIndex: 'cx'},
 					                { header: 'CY', dataIndex: 'cy'}
 				                ],
@@ -368,10 +403,12 @@ Ext.onReady(function() {
 				                    Ext.getCmp('analysisid').body.update("所在行："+record.data.name+"<br /> " +
 				                    		"数据值："+record.data.value+"<br />坐标值：("+parseFloat(record.data.cx).toFixed(2)+","+parseFloat(record.data.cy).toFixed(2)+")");
 				                  }
-				      }
+				      },
+				      
+				      bbar:pager
 					},{
 						xtype : 'form',
-						width : 291,
+						width : 380,
 						height : 500,
 						
 						title : '布局',
@@ -604,7 +641,7 @@ Ext.onReady(function() {
 		
 		$.getJSON(datafile, function(data){ 
 		   var node = data.nodes.length;
-		   var link = data.links.length/2;
+		   var link = data.links.length;
 		   Ext.getCmp('datainfoid').body.update("顶点数为："+node+"<br />边数为："+link);
 		}); 
 
