@@ -63,8 +63,8 @@ public class ChengLayout implements Layout {
 			Node node = nodes[i];
 			//node.getNodeLayoutData().setX(Math.random() * width);
 			//node.getNodeLayoutData().setY(Math.random() * height);
-			node.getNodeLayoutData().setX(0d);
-			node.getNodeLayoutData().setY(0d);
+			node.getNodeLayoutData().setX(Math.random() * width);
+			node.getNodeLayoutData().setY(Math.random() * height);
 			node.getNodeLayoutData().setOldX(node.getNodeLayoutData().getX());
 			node.getNodeLayoutData().setOldY(node.getNodeLayoutData().getY());
 		}
@@ -544,7 +544,7 @@ public class ChengLayout implements Layout {
 			visited.put(node1,1);
 			deepQueue.offer(1);
 			int curDeep;
-//			System.out.println("当前"+node1.getNodeId());
+			//System.out.println("当前"+node1.getNodeId());
 			while(!queue.isEmpty()){
 				Node node=queue.poll();
 				curDeep=deepQueue.poll();
@@ -552,7 +552,7 @@ public class ChengLayout implements Layout {
 				Edge newEdge=new Edge(node1.getNodeId(),node.getNodeId());
 				if(curDeep!=1&&edges3.containsKey(newEdge)){
 					edges3.put(newEdge, edges3.get(newEdge)+(float)Math.pow(0.5f, curDeep-1));
-//					System.out.println(edges3.get(newEdge)+(float)Math.pow(0.5f, curDeep-1));
+					System.out.println(edges3.get(newEdge)+(float)Math.pow(0.5f, curDeep-1));
 				}
 				if(curDeep!=1&&!edges3.containsKey(newEdge)){
 					edges3.put(newEdge,(float)Math.pow(0.5f, curDeep-1));
@@ -593,7 +593,7 @@ public class ChengLayout implements Layout {
 			stack.push(node1);
 			visited.add(node1);
 			pStack.push(1f);
-//			System.out.println(node1.getNodeId());
+			System.out.println(node1.getNodeId());
 			float  p;
 			while(!stack.isEmpty()){
 				Node node=stack.pop();

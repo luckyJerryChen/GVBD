@@ -18,7 +18,6 @@ import net.sf.json.JSONObject;
 
 public class Output {
 	public static void outputJson(Graph graph,String nre){
-
 		JSONObject jo = new JSONObject();
 		Node [] nodes=graph.getNodes();
 		List<Map<String,String>> nodeList=new ArrayList<Map<String,String>>();
@@ -28,7 +27,6 @@ public class Output {
 			Map<String,String> nodeMap=new HashMap<String,String>();
 			nodeMap.put("name", node.getNodeName());
 			nodeMap.put("value",node.getNodeValue());
-			
 			nodeMap.put("cx", Double.toString(node.getNodeLayoutData().getX()));
 			nodeMap.put("cy", Double.toString(node.getNodeLayoutData().getY()));
 			if(i == 0)System.out.println(nodeMap);
