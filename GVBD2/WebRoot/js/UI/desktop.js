@@ -458,7 +458,7 @@ Ext.onReady(function() {
 								 listeners:{
 										'change':function(thisField,newValue,oldValue,epots){  
 										        if(newValue === 'ChengLayout' ){
-										                	Ext.getCmp("speed").setVisible(true);  
+										                	
 										                	Ext.getCmp("kvalue").setVisible(true);  
 										                	
 										                	Ext.getCmp("isDirected").setVisible(true);
@@ -468,7 +468,7 @@ Ext.onReady(function() {
 										                	Ext.getCmp("times").setVisible(true);
 										                	Ext.getCmp('save').setDisabled(false);
 										        }else if (newValue === 'FRLayout'){
-										                	Ext.getCmp("speed").setVisible(true);  
+										                	
 										                	Ext.getCmp("kvalue").setVisible(true);  
 										                
 										                	Ext.getCmp("isDirected").setVisible(true);
@@ -478,7 +478,7 @@ Ext.onReady(function() {
 										                	Ext.getCmp("times").setVisible(true);
 										                	Ext.getCmp('save').setDisabled(false);
 										        }else{
-										                	Ext.getCmp("speed").setVisible(false);  
+										                	
 										                	Ext.getCmp("kvalue").setVisible(false);  
 										                	
 										                	Ext.getCmp("isDirected").setVisible(false);
@@ -490,17 +490,6 @@ Ext.onReady(function() {
 										         }//else
 								         }//change
 						           }//listeners
-					           },{
-					               xtype: 'numberfield',
-					               margin:10,
-					               name: 'speed',
-					               id:'speed',
-					               fieldLabel: 'Speed 值',
-					               value: 5,
-					               minValue: 1,
-					               maxValue: 50,
-					               allowBlank: false,
-					               hidden: true  
 					           },{
 					               xtype: 'numberfield',
 					               margin:10,
@@ -552,10 +541,8 @@ Ext.onReady(function() {
 					                id: 'temperature',
 					                margin:10,
 					                minValue: 1,
-					                value:1,
+					                value:140,
 					                allowDecimals: true,
-					                decimalPrecision: 1,
-					                step: 0.1,
 					                allowBlank: false,
 					                hidden: true  
 					            },{
