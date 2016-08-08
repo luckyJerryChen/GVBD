@@ -5,7 +5,6 @@ import gvbd.config.DataConfig;
 import gvbd.config.FRLayoutConfig;
 import gvbd.data.BSPNodeFormatImpl;
 import gvbd.data.GraphData;
-import gvbd.evaluate.Evaluate;
 import gvbd.layout.ChengLayout;
 import gvbd.layout.FRForceLayout;
 import gvbd.layout.Layout;
@@ -22,7 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class postData extends HttpServlet {
+public class CopyOfpostData extends HttpServlet {
 
 	/**
 	 * Destruction of the servlet. <br>
@@ -78,7 +77,6 @@ public class postData extends HttpServlet {
 		System.out.println(request.getParameter("forceThreshold"));// forceThreshold值
 		System.out.println(request.getParameter("temperature"));// temperature值
 		System.out.println(request.getParameter("deep"));// deep值
-		System.out.println(request.getParameter("filename"));// 文件名值
 		int k = Integer.parseInt(request.getParameter("kvalue"));
 		String layoutMethod = request.getParameter("title");
 
@@ -105,21 +103,15 @@ public class postData extends HttpServlet {
 					.getParameter("temperature")));
 
 			GraphData graphData = new GraphData();
-			
 			graphData.loadNodeData(DataConfig.getDataReader(),
 					DataConfig.getNodeFormat(), DataConfig.getNodeNum());
 
 			Layout layout = new ChengLayout(graphData.getGraph(), layoutConfig);
 			layout.doLayout();
-			
-			Output.outputJson(graphData.getGraph(),nre+"\\"+request.getParameter("filename")+".json");
+			Output.outputJson(graphData.getGraph(),nre);
 		}
-		if (layoutMethod.equals("FRLayout")) {
-			 
-			
-			
-			
-			FRLayoutConfig layoutConfig = new FRLayoutConfig();
+		else if (layoutMethod.equals("ForceLayout")) {
+			FRLayoutConfig layoutConfig=new FRLayoutConfig();
 			if (request.getParameter("isDirected").equals("false")) {
 				layoutConfig.setDirected(false);
 			} else if (request.getParameter("isDirected").equals("true")) {
@@ -127,31 +119,44 @@ public class postData extends HttpServlet {
 			} else {
 				System.out.println("没有这种选择");
 			}
-			
+			layoutConfig.setK(Integer.parseInt(request.getParameter("kvalue")));
+			layoutConfig.setLayoutByTimes(true);
 			layoutConfig.setWidth(5000);
 			layoutConfig.setHeight(5000);
-			layoutConfig.setLayoutByTimes(true);
-			layoutConfig.setK(Integer.parseInt(request.getParameter("kvalue")));
-	
 			layoutConfig.setTimes(Integer.parseInt(request
 					.getParameter("times")));
 			layoutConfig
 					.setCool(Float.parseFloat(request.getParameter("cool")));
 			layoutConfig.setTemperature(Integer.parseInt(request
 					.getParameter("temperature")));
-
-			
-			
-			
 			GraphData graphData = new GraphData();
 			graphData.loadNodeData(DataConfig.getDataReader(),
 					DataConfig.getNodeFormat(), DataConfig.getNodeNum());
 
-			Layout layout = new FRForceLayout(graphData.getGraph(), layoutConfig);
-			layout.doLayout();
+			Layout layout=new FRForceLayout(graphData.getGraph(),layoutConfig);
 			
-			Output.outputJson(graphData.getGraph(),nre+"\\"+request.getParameter("filename")+".json");
+			layout.doLayout();
+			Output.outputJson(graphData.getGraph(),nre);
+			
+
 		}
+		
+		
+		
+		
+		// response.setContentType("text/html");
+		// PrintWriter out = response.getWriter();
+		// out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
+		// out.println("<HTML>");
+		// out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
+		// out.println("  <BODY>");
+		// out.print("    This is ");
+		// out.print(this.getClass());
+		// out.println(", using the POST method");
+		// out.println("  </BODY>");
+		// out.println("</HTML>");
+		// out.flush();
+		// out.close();
 	}
 
 	/**

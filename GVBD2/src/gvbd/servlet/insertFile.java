@@ -23,13 +23,5 @@ public class insertFile {
 		  //截取即可  
 		  str=str.substring(0, num+"WebRoot".length());  
 		  System.out.println(str);
-		 
-		  
-		  
-		  
-		  
 	    }  
-
-	
-	
 }
