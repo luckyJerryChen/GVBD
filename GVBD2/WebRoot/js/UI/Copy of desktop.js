@@ -2,46 +2,19 @@ Ext.require([
     'Ext.form.*',
     'Ext.tab.*',
     'Ext.tip.QuickTipManager',
-    'Ext.PagingToolbar',
-    'Ext.chart.*'
+    'Ext.PagingToolbar'
 ]);
 
 Ext.onReady(function() {
 
     var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
     var filename;
-    var win,import_val,production_val,kmeans_val;
+    var win,import_val,production_val;
     var match = window.location.href;
     var s=match.indexOf("?"); 
     var jsonfile=match.substring(s+1);// t就是?后面的东西了 
     var datafile= 'data/'+jsonfile+'.json';
-    var storeChart = Ext.create('Ext.data.JsonStore', {
-        fields: ['name', 'data'],
-        data: [
-            { 'name': 'metric one',   'data':10 },
-            { 'name': 'metric two',   'data': 7 },
-            { 'name': 'metric three', 'data': 5 },
-            { 'name': 'metric four',  'data': 2 },
-            { 'name': 'metric five1',  'data':27 },
-            { 'name': 'metric five2',  'data':27 },
-            { 'name': 'metric five3',  'data':27 },
-            { 'name': 'metric five4',  'data':27 },
-        ]
-    });
     // create the Data Store
-
-    var graphDataStore=Ext.create('Ext.data.Store',{
-    	fields:[
-                {name:'graphName',type:'string'},
-                {name:'graphData',type:'int'}
-            ],
-        data:[
-            {graphName:"A",graphData:700},
-            {graphName:"B",graphData:800},
-            {graphName:"C",graphData:600},
-            {graphName:"D",graphData:50}  
-        ]
-    });
     var store = Ext.create('Ext.data.Store', {
         fields : [{
             name : 'name',type : 'int'
@@ -167,92 +140,7 @@ Ext.onReady(function() {
         }
         import_val.show();
     }
-    function kmeans(action) {
-        if (!kmeans_val) {
-        	 var kmeansForm=new Ext.FormPanel({  
-        	        id:'kmeansForm',  
-        	        width:520,  
-        	        frame:true,    
-        	        autoHeight:true,  
-        	        bodyStyle:'10px 10px 0px 10px',  
-        	        labelWidth:50,  
-        	        items:[{
-        	            	xtype: 'numberfield',
-                       	    id:'number',
-                            fieldLabel: 'K值',
-                            name: 'number',
-                            value: 1,
-                            minValue: 1,
-                            allowNegative:false,
-                            allowBlank: false
-        	            },{
-        	            	xtype:'textfield',
-        	            	id:'jsonname',
-        	            	fieldLabel:'文件名',
-        	            	name:'jsonname',
-        	            	value:jsonfile,
-                            hidden: true, 
-                            hideLabel:true,
-//        	            },{
-//    					    xtype:          'combo',
-//    					    height :        20,
-//    					    emptyText:      '请选择一个文件',
-//    						name:           'jsonname',
-//    						id:           'jsonname',
-//    						displayField:   'value',
-//    						valueField:     'value',
-//    						fieldLabel: '数据集',
-//    						mode:'local',
-//    						store:store1,
-    				  }
-        	        ],  
-        	        buttons: [{  
-        	                        text: '提交',  
-        	                        handler: function(){  
-        	                            if(kmeansForm.getForm().isValid() && jsonfile){
-        	                            	console.log(jsonfile);
-        	                                kmeansForm.getForm().submit({  
-        	                                    url:'servlet/kmeans',  
-        	                                    method:'POST',
-        	                                    success: function(fp, action){   
-
-        	                                    	Ext.MessageBox.alert('Ok!', '聚类生产中,请稍后.');
-				                        	    	if(jsonfile){
-				                        	    		window.location.href="UI/desktop.jsp?kmeans_"+jsonfile; 
-				                        	    	}else{
-				                        	    		document.location.reload();
-				                        	    	}       	                                        
-        	                                        kmeans_val.hide();
-        	                                    },  
-        	                                    failure: function(fp, action){  
-        	                                        Ext.MessageBox.alert('警告', '数据聚类失败');    
-        	                                        kmeans_val.hide();  
-        	                                    }  
-        	                                });  
-        	                            }  
-        	                        }  
-        	                    },{  
-        	                        text: '重置',  
-        	                        handler: function(){  
-        	                            kmeansForm.getForm().reset();  
-        	                        }  
-        	                    }]  
-        	    });  
-        	      
-        	 
-            kmeans_val = Ext.widget('window', {
-                title: action,
-                closeAction: 'hide',
-                width: 300,
-                height: 100,
-                layout: 'fit',
-                resizable: true,
-                modal: true,
-                items: kmeansForm
-            });
-        }
-        kmeans_val.show();
-    }
+    
     function production(action) {
         if (!production_val) {
             var form = Ext.widget('form', {
@@ -281,6 +169,7 @@ Ext.onReady(function() {
                      name: 'number',
                      value: 1,
                      minValue: 1,
+                     maxValue: 125,
                      allowNegative:false,
                      allowBlank: false
                 },{
@@ -365,10 +254,12 @@ Ext.onReady(function() {
 		},
 		drawMap : function() {
 			var width = 5000, height = 5000;
-			//var radius = d3.scale.sqrt().range([0, 6]);//值域  
-			var color = d3.scaleOrdinal().range(d3.schemeCategory20);
-			var svg = d3.select("#" + this.id + "-body").append("svg").attr("width", width).attr("height", height);
+			
+		   // var zoom = d3.behavior.zoom().scaleExtent([1, 10]).on("zoom", zoomed); 
+		    var svg = d3.select("#" + this.id + "-body").append("svg").attr("width", width).attr("height", height);
 		    transform = d3.zoomIdentity;
+		    
+		   // var points = d3.range(2000).map(phyllotaxis(10));
 			d3.json(datafile, function(json){
 				var circles_group = svg.append("g");
 				var lines = circles_group.selectAll("line").data(json.links).enter().append("line");			
@@ -382,19 +273,9 @@ Ext.onReady(function() {
 				var circleAttributes = circles
 				.attr("cx",function(d){return d.cx})
 				.attr("cy",function(d){return d.cy})
-				.attr("r", 5)  
-				//.on("click", clicked)
-				//.attr("fill","#6495ed");
-				.style("fill", function(d, i) { 
-					if(d.color){
-						return color(i); 
-					}else{
-						return color(1); 
-					}
-					//console.log(i);
-					
-					
-				});
+				.attr("r",10)
+				.on("click", clicked)
+				.attr("fill","#6495ed");
 				
 				circles.append("title")
 				.text(function(d){return d.value})
@@ -414,14 +295,15 @@ Ext.onReady(function() {
 				.attr("x2",function(d){return d.x2})
 				.attr("y2",function(d){return d.y2})
 				.attr("fill","#000");		
+
 				svg.call(d3.zoom()
 			    	    .scaleExtent([1 / 8, 8])
 			    	    .on("zoom", zoomed));
-//				function clicked(d, i){
-//					console.log(d);
-//					Ext.getCmp('datainfoid').body.update("顶点数为："+d.value+"<br />边数为："+i);
-//					console.log(i);
-//				}
+				function clicked(d, i){
+					console.log(d);
+					Ext.getCmp('datainfoid').body.update("顶点数为："+d.value+"<br />边数为："+i);
+					console.log(i);
+				}
 			    function zoomed() {
 			    	circles_group.attr("transform", d3.event.transform);
 			    }
@@ -485,17 +367,17 @@ Ext.onReady(function() {
 
 					}, {
 						xtype : 'button',
-						text : '工具',
+						text : '工作区',
 						menu : [
-							        {text : '聚类',handler: Ext.Function.pass(kmeans, '聚类')}
-							   ]
-	
-					}, {
-						xtype : 'button',
-						text : '工作区'
+						        {text : '新增工作区',handler: Ext.Function.pass(addTab, '导入数据')}
+						       ]
+
 					}, {
 						xtype : 'button',
 						text : '视图'
+					}, {
+						xtype : 'button',
+						text : '工具'
 					}, {
 						xtype : 'button',
 						text : '窗口'
@@ -537,21 +419,23 @@ Ext.onReady(function() {
 						height : 400,
 						store :store,
 						columns: [
-					                { header: '索引值',  dataIndex: 'name',width:60},
-					                { header: '节点名称', dataIndex: 'value',width:120},
-					                { header: 'X坐标', dataIndex: 'cx'},
-					                { header: 'Y坐标', dataIndex: 'cy'}
+					                { header: 'Name',  dataIndex: 'name',width:40},
+					                { header: 'Value', dataIndex: 'value',width:120},
+					                { header: 'CX', dataIndex: 'cx'},
+					                { header: 'CY', dataIndex: 'cy'}
 				                ],
-//				     listeners: { 'itemclick': function (view, record, item, index, e) {
-//				                    Ext.getCmp('analysisid').body.update("所在行："+record.data.name+"<br /> " +
-//				                    		"数据值："+record.data.value+"<br />坐标值：("+parseFloat(record.data.cx).toFixed(2)+","+parseFloat(record.data.cy).toFixed(2)+")");
-//				                  }
-//				      },
+				     listeners: { 'itemclick': function (view, record, item, index, e) {
+				                    Ext.getCmp('analysisid').body.update("所在行："+record.data.name+"<br /> " +
+				                    		"数据值："+record.data.value+"<br />坐标值：("+parseFloat(record.data.cx).toFixed(2)+","+parseFloat(record.data.cy).toFixed(2)+")");
+				                  }
+				      },
+				      
 				      bbar:pager
 					},{
 						xtype : 'form',
 						width : 380,
 						height : 500,
+						
 						title : '布局',
 						collapsible: true, //可折叠
 					    items:[{
@@ -575,7 +459,7 @@ Ext.onReady(function() {
 								 listeners:{
 										'change':function(thisField,newValue,oldValue,epots){  
 										        if(newValue === 'ChengLayout' ){
-										                	
+										                	Ext.getCmp("speed").setVisible(true);  
 										                	Ext.getCmp("kvalue").setVisible(true);  
 										                	
 										                	Ext.getCmp("isDirected").setVisible(true);
@@ -585,7 +469,7 @@ Ext.onReady(function() {
 										                	Ext.getCmp("times").setVisible(true);
 										                	Ext.getCmp('save').setDisabled(false);
 										        }else if (newValue === 'FRLayout'){
-										                	
+										                	Ext.getCmp("speed").setVisible(true);  
 										                	Ext.getCmp("kvalue").setVisible(true);  
 										                
 										                	Ext.getCmp("isDirected").setVisible(true);
@@ -595,7 +479,7 @@ Ext.onReady(function() {
 										                	Ext.getCmp("times").setVisible(true);
 										                	Ext.getCmp('save').setDisabled(false);
 										        }else{
-										                	
+										                	Ext.getCmp("speed").setVisible(false);  
 										                	Ext.getCmp("kvalue").setVisible(false);  
 										                	
 										                	Ext.getCmp("isDirected").setVisible(false);
@@ -610,15 +494,23 @@ Ext.onReady(function() {
 					           },{
 					               xtype: 'numberfield',
 					               margin:10,
+					               name: 'speed',
+					               id:'speed',
+					               fieldLabel: 'Speed 值',
+					               value: 5,
+					               minValue: 1,
+					               maxValue: 50,
+					               allowBlank: false,
+					               hidden: true  
+					           },{
+					               xtype: 'numberfield',
+					               margin:10,
 					               name: 'kvalue',
 					               id:'kvalue',
 					               fieldLabel: 'K 值',
 					               value: 1,
-					               minValue: 0,
-					               maxValue: 1,
-					               step:0.1,
-					               allowDecimals: true,
-					               decimalPrecision: 2,
+					               minValue: 1,
+					               maxValue: 50,
 					               allowBlank: false,
 					               hidden: true  
 					           },{
@@ -661,8 +553,10 @@ Ext.onReady(function() {
 					                id: 'temperature',
 					                margin:10,
 					                minValue: 1,
-					                value:140,
+					                value:1,
 					                allowDecimals: true,
+					                decimalPrecision: 1,
+					                step: 0.1,
 					                allowBlank: false,
 					                hidden: true  
 					            },{
@@ -733,96 +627,20 @@ Ext.onReady(function() {
 					split : true,
 					title : '数据信息',
 					items : [{
-						xtype : 'panel',
-						width : 300,
-						height : 500,
-						title : '统计',
-						collapsible: true, //可折叠
-					    items:[{
-							    	xtype : 'panel',
-									id: 'datainfoid',
-									width : 300,
-									height : 40,
-									html : '',
-					        	},{
-									xtype: 'chart',
-									width : 300,
-									height : 400,
-						            store: storeChart,
-						            shadow: true,
-						            axes: [{
-						                type: 'Numeric',
-						                position: 'left',
-						                fields: ['data'],
-						                grid: true,
-						                minimum: 0
-						            }, {
-						                type: 'Category',
-						                position: 'bottom',
-						                fields: ['name'],
-						                title: 'Month'
-						            }],
-						            series: [{
-						            	type: 'column',
-						            	axis: 'left',
-						            	highlight: true,
-						                tips: {
-						                    trackMouse: true,
-						                    width: 100,
-						                    height: 28,
-						                    renderer: function(storeItem, item) {
-						                      
-						                      this.setTitle(storeItem.get('name') + ': ' + storeItem.get('data'));
-						                    }
-						                  },
-						                  xField: 'name',
-						                  yField: 'data'
-						            }]
-									
-					    		}]	
+								xtype : 'panel',
+								id: 'datainfoid',
+								width : 200,
+								height : 400,
+								title : '统计',
+								html : '',
 							},{
 								xtype : 'panel',
-								width : 300,
-								height : 400,
+								id: 'analysisid',
+								width : 200,
+								height : 500,
 								title : '分析',
-								collapsible: true, //可折叠
-							    items:[{
-											xtype: 'chart',
-											width : 300,
-											height : 300,
-								            store: graphDataStore,
-								            shadow: false,
-								            series: [{
-								            	type: 'pie',
-								                field: 'graphData',
-								                label: {//这里能够使拼饼上面显示，该拼饼属于的部分
-								                    field: 'graphName',
-								                    display: 'rotate',
-								                    font: '18px Arial'
-								                },
-								                highlight: {//这里是突出效果的声明，margin越大，鼠标悬停在拼饼上面，拼饼突出得越多
-								                    segment: {
-								                        margin: 5
-								                    }
-								                },
-								                tips: {
-								                    trackMouse: true,
-								                    width: 100,
-								                    height: 28,
-								                    renderer: function(storeItem, item) {
-								                      //calculate percentage.
-								                      var total = 0;
-								                      graphDataStore.each(function(rec) {
-								                          total += rec.get('graphData');
-								                      });
-								                      this.setTitle(storeItem.get('graphName') + ': ' + Math.round(storeItem.get('graphData') / total * 100) + '%');
-								                    }
-								                  },
-								                animate: true
-								            }]
-											
-							    		}]	
-									}]
+								html : '',
+							}]
 				}, {
 					region : 'center',
 					xtype : 'tabpanel', // TabPanel itself has no title

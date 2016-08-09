@@ -249,7 +249,7 @@ public class kMeans {
 			}
 		}
 		
-		File file=new File("json222.json");
+		File file=new File(outFilePath);
 		FileOutputStream outStream=null;
 		try {
 			outStream=new FileOutputStream(file);
@@ -269,7 +269,7 @@ public class kMeans {
 			for (int j = 0; j < helpCenterList.get(i).size(); j++) {
 				System.out.println(helpCenterList.get(i).get(j));
 				JSONObject JSObject=map.get(helpCenterList.get(i).get(j).get(0)+" "+helpCenterList.get(i).get(j).get(1));
-				JSObject.element("color", "1");
+				JSObject.element("color", i+1);
 				jaNode.add(JSObject);
 				System.out.println(JSObject.toString());
 				
@@ -278,7 +278,7 @@ public class kMeans {
 		jsonObject2.put("nodes", jaNode);
 		outStream.write(jsonObject2.toString().getBytes("utf-8"));
 		outStream.close();
-		
+		System.out.println(file.getAbsolutePath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

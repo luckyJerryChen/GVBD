@@ -38,8 +38,12 @@ public class testyyj {
 		List list = new ArrayList();
 		for(int i=0;i<tempList.length;i++){
 			if(tempList[i].isFile()){
-				hash.put(i, getString(tempList[i].getName()));
-				list.add(getString(tempList[i].getName()));
+				if(!tempList[i].getName().startsWith("kmeans_")){
+					hash.put(i, getString(tempList[i].getName()));
+					list.add(getString(tempList[i].getName()));
+					
+				}
+				
 			}
 		}
 		String json =hashMapToJson(hash);
