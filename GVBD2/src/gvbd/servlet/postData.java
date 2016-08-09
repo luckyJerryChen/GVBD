@@ -79,6 +79,7 @@ public class postData extends HttpServlet {
 		System.out.println(request.getParameter("temperature"));// temperature值
 		System.out.println(request.getParameter("deep"));// deep值
 		System.out.println(request.getParameter("filename"));// 文件名值
+		System.out.println(request.getParameter("times"));
 		int k = Integer.parseInt(request.getParameter("kvalue"));
 		String layoutMethod = request.getParameter("title");
 
@@ -91,6 +92,22 @@ public class postData extends HttpServlet {
 			} else {
 				System.out.println("没有这种选择");
 			}
+			
+			layoutConfig.setLayoutByTimes(true);
+			
+/*			layoutConfig.setDirected(false);
+			layoutConfig.setHeight(5000);
+			layoutConfig.setK(1);
+			
+			layoutConfig.setWidth(5000);
+			layoutConfig.setDeep(3);
+			layoutConfig.setTimes(200);
+			layoutConfig.setCool(0.95f);
+			layoutConfig.setTemperature(140);*/
+
+			
+			
+			
 			layoutConfig.setWidth(5000);
 			layoutConfig.setHeight(5000);
 			layoutConfig.setLayoutByTimes(true);
@@ -117,9 +134,10 @@ public class postData extends HttpServlet {
 		if (layoutMethod.equals("FRLayout")) {
 			 
 			System.out.println("FRLayout");
-			
-			
 			FRLayoutConfig layoutConfig = new FRLayoutConfig();
+			
+			
+			layoutConfig.setLayoutByTimes(true);
 			if (request.getParameter("isDirected").equals("false")) {
 				layoutConfig.setDirected(false);
 			} else if (request.getParameter("isDirected").equals("true")) {
@@ -127,7 +145,6 @@ public class postData extends HttpServlet {
 			} else {
 				System.out.println("没有这种选择");
 			}
-			
 			layoutConfig.setWidth(5000);
 			layoutConfig.setHeight(5000);
 			layoutConfig.setLayoutByTimes(true);
@@ -140,9 +157,6 @@ public class postData extends HttpServlet {
 			layoutConfig.setTemperature(Integer.parseInt(request
 					.getParameter("temperature")));
 
-			
-			
-			
 			GraphData graphData = new GraphData();
 			graphData.loadNodeData(DataConfig.getDataReader(),
 					DataConfig.getNodeFormat(), DataConfig.getNodeNum());

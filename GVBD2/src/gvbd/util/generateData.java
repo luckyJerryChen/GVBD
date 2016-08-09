@@ -92,7 +92,7 @@ public class generateData
     }
     catch (Exception e)
     {
-      System.out.println(e);
+      e.printStackTrace();
     }
     System.out.println("Generate data successfully and the statics as follws:");
     System.out.println("Size of DataSet : " + (float)root.length() / 1048576.0F + " MB");
@@ -116,6 +116,7 @@ public class generateData
 			            EDGE_ID_WEIGHT_SPLIT + DEFAULT_EDGE_WEIGHT));
 		  }
 	  }
+	  if(sb.length()!=0)
 	  sb.deleteCharAt(0);
 	  return sb.toString();
   
@@ -136,6 +137,8 @@ public class generateData
 		for(int i=0;i<adjList.size();++i){
 			String vertex=adj[i];
 			System.out.println(vertex);
+			if(vertex.split(VERTEX_EDGE_SPLIT).length==1)
+				continue;
 			String[] edges=vertex.split(VERTEX_EDGE_SPLIT)[1].split(EDGE_EDGE_SPLIT);
 			for(int j=0 ;j<edges.length;++j){
 				int vertexIndex=Integer.parseInt(edges[j].split(EDGE_ID_WEIGHT_SPLIT)[0])-1;

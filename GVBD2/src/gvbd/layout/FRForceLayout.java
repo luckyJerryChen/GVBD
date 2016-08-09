@@ -33,13 +33,15 @@ public class FRForceLayout implements Layout {
 		this.isDirected = forceLayoutConfig.isDirected();
 		this.area = this.height * this.width;
 		System.out.println("tttt"+this.area);
-		this.k = Math.sqrt(this.area / this.graph.getNodes().length);
+		
+		this.k = Math.sqrt(this.area / this.graph.getNodes().length)*forceLayoutConfig.getK();
 		this.layoutByTimes = forceLayoutConfig.isLayoutByTimes();
 		this.times = forceLayoutConfig.getTimes();
 		this.forceThreshold = forceLayoutConfig.getForceThreshold();
 		this.cool=forceLayoutConfig.getCool();
 		this.temperature=forceLayoutConfig.getTemperature();
 		System.out.println("k="+this.k);
+		System.out.println("time="+this.times);
 	}
 
 	@Override

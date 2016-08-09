@@ -50,6 +50,7 @@ public class Output {
 		JSONArray jaLink = JSONArray.fromObject(linkList);
 		jo.put("nodes", jaNode);
 		jo.put("links", jaLink);
+		
 		File file=new File(nre);
 		FileOutputStream outStream=null;
 		try {

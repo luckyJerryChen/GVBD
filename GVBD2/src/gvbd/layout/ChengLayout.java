@@ -43,7 +43,7 @@ public class ChengLayout implements Layout {
 		this.isDirected = forceLayoutConfig.isDirected();
 		this.area = this.height * this.width;
 		System.out.println("面积="+this.area);
-		this.k = Math.sqrt(this.area / this.graph.getNodes().length);
+		this.k = Math.sqrt(this.area / this.graph.getNodes().length)*forceLayoutConfig.getK();
 		this.layoutByTimes = forceLayoutConfig.isLayoutByTimes();
 		this.times = forceLayoutConfig.getTimes();
 		this.forceThreshold = forceLayoutConfig.getForceThreshold();

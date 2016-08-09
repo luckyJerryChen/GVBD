@@ -80,8 +80,7 @@ public class generateData
       fw.close();
     }
     catch (Exception e)
-    {
-      System.out.println(e);
+    {e.printStackTrace();
     }
     System.out.println("Generate data successfully and the statics as follws:");
     System.out.println("Size of DataSet : " + (float)root.length() / 1048576.0F + " MB");
