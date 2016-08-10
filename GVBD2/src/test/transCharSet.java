@@ -12,11 +12,12 @@ import java.io.OutputStreamWriter;
 public class transCharSet {
 	public static void main(String[] args) throws IOException {
 		try {
-			BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1234.txt"),"GBK"));
-			BufferedWriter bw=new BufferedWriter(new OutputStreamWriter (new FileOutputStream("C:\\Users\\Administrator\\Desktop\\22222.txt"),"UTF-8"));
+			BufferedReader br=new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Administrator\\Desktop\\数据\\needData\\11111.txt"),"GBK"));
+			BufferedWriter bw=new BufferedWriter(new OutputStreamWriter (new FileOutputStream("C:\\Users\\Administrator\\Desktop\\数据\\needData\\33333.txt"),"UTF-8"));
 			String line =br.readLine();
 			while(line!=null){
 				bw.write(line);
+				System.out.println(line);
 				bw.newLine();
 				line=br.readLine();
 			}

@@ -184,7 +184,7 @@ public class kMeans {
 				int centerIndex = -1;
 				for (int j = 0; j < k; j++) {// 离0~k之间哪个中心最近
 					double currentDistance = 0;
-					for (int t = 1; t < centers.get(0).size(); t++) {// 计算两点之间的欧式距离
+					for (int t = 0; t < centers.get(0).size(); t++) {// 计算两点之间的欧式距离
 						currentDistance += ((centers.get(j).get(t) - dataList
 								.get(i).get(t)) / (centers.get(j).get(t) + dataList
 								.get(i).get(t)))

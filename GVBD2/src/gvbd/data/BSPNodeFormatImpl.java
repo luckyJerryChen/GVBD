@@ -16,6 +16,8 @@ public class BSPNodeFormatImpl implements NodeFormat{
 		String nodeTemp[]=temp[0].split(":");
 		//System.out.println("aaaaaaaaaaaaaa"+temp[0]);
 		String edgesTemp[]=temp[1].split(" ");
+		if(nodeTemp[0].startsWith("?"))
+			nodeTemp[0]=nodeTemp[0].substring(1);
 		nodeId=Integer.parseInt(nodeTemp[0]);
 		nodeValue=nodeTemp[1];
 		if(nodeId == 1)System.out.println(nodeValue);

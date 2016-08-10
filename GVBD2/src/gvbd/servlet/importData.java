@@ -2,6 +2,7 @@ package gvbd.servlet;
 
 import gvbd.config.DataConfig;
 import gvbd.data.BSPNodeFormatImpl;
+import gvbd.graph.GraphData;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -92,10 +93,10 @@ public class importData extends HttpServlet {
 			while (iter.hasNext()) {
 				FileItem item = (FileItem) iter.next();
 				if (!item.isFormField()) {// 是文件
-					String realPath = request.getSession().getServletContext()
+					String realPath1 = request.getSession().getServletContext()
 							.getRealPath("");
 					String imgPath = "/dataSimple/";
-					realPath = realPath + imgPath;
+					String realPath = realPath1 + imgPath;
 					String fileName = item.getName();
 					File file = new File(realPath + fileName);
 					
@@ -108,14 +109,17 @@ public class importData extends HttpServlet {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					
+					GraphData graphData = new GraphData();
+					graphData.UndirectGraphTopK(realPath+fileName,realPath1,fileName.substring(0, fileName.lastIndexOf(".")));
 					//System.out.println(numbervalue);
-					DataConfig.setDataPath(realPath + fileName);
+/*					DataConfig.setDataPath(realPath + fileName);
 					BufferedReader br = new BufferedReader(
 							new InputStreamReader(new FileInputStream(
 									DataConfig.getDataPath()), "utf-8"));
 					DataConfig.setDataReader(br);
 					DataConfig.setNodeFormat(new BSPNodeFormatImpl());
-					DataConfig.setNodeNum(Integer.parseInt(numbervalue));
+					DataConfig.setNodeNum(Integer.parseInt(numbervalue));*/
 					PrintWriter out = response.getWriter();
 					out.print("{success:true,msg:'" + imgPath + "',fileName:'"
 							+ fileName + "'}");

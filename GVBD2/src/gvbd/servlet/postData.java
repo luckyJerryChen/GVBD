@@ -5,17 +5,15 @@ import gvbd.config.DataConfig;
 import gvbd.config.FRLayoutConfig;
 import gvbd.data.BSPNodeFormatImpl;
 import gvbd.data.GraphData;
-import gvbd.evaluate.Evaluate;
 import gvbd.layout.ChengLayout;
 import gvbd.layout.FRForceLayout;
 import gvbd.layout.Layout;
 import gvbd.util.Output;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStreamReader;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -70,6 +68,7 @@ public class postData extends HttpServlet {
 			throws ServletException, IOException {
 		
 		String nre = getServletContext().getRealPath("/data/");
+		String nre2 = getServletContext().getRealPath("/dataSimple/");
 		System.out.println(request.getParameter("kvalue"));// k值
 		System.out.println(request.getParameter("title"));// 布局方式
 		System.out.println(request.getParameter("speed"));// 速度值
@@ -80,7 +79,21 @@ public class postData extends HttpServlet {
 		System.out.println(request.getParameter("deep"));// deep值
 		System.out.println(request.getParameter("filename"));// 文件名值
 		System.out.println(request.getParameter("times"));
-		int k = Integer.parseInt(request.getParameter("kvalue"));
+		
+		System.out.println(request.getParameter("filenumber"));
+		
+		
+		DataConfig.setDataPath(nre2+"\\"+request.getParameter("filename")+".txt");
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(new FileInputStream(
+						DataConfig.getDataPath()), "utf-8"));
+		DataConfig.setDataReader(br);
+		DataConfig.setNodeFormat(new BSPNodeFormatImpl());
+		DataConfig.setNodeNum(Integer.parseInt(request.getParameter("filenumber")));
+		
+		
+		
+		float k = Float.parseFloat(request.getParameter("kvalue"));
 		String layoutMethod = request.getParameter("title");
 
 		if (layoutMethod.equals("ChengLayout")) {
@@ -111,7 +124,7 @@ public class postData extends HttpServlet {
 			layoutConfig.setWidth(5000);
 			layoutConfig.setHeight(5000);
 			layoutConfig.setLayoutByTimes(true);
-			layoutConfig.setK(Integer.parseInt(request.getParameter("kvalue")));
+			layoutConfig.setK(Float.parseFloat(request.getParameter("kvalue")));
 			layoutConfig
 					.setDeep(Integer.parseInt(request.getParameter("deep")));
 			layoutConfig.setTimes(Integer.parseInt(request
@@ -148,7 +161,7 @@ public class postData extends HttpServlet {
 			layoutConfig.setWidth(5000);
 			layoutConfig.setHeight(5000);
 			layoutConfig.setLayoutByTimes(true);
-			layoutConfig.setK(Integer.parseInt(request.getParameter("kvalue")));
+			layoutConfig.setK(Float.parseFloat(request.getParameter("kvalue")));
 	
 			layoutConfig.setTimes(Integer.parseInt(request
 					.getParameter("times")));

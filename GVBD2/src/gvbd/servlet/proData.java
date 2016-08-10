@@ -2,6 +2,7 @@ package gvbd.servlet;
 
 import gvbd.config.DataConfig;
 import gvbd.data.BSPNodeFormatImpl;
+import gvbd.graph.GraphData;
 import gvbd.util.generateData;
 
 import java.io.BufferedReader;
@@ -55,12 +56,14 @@ public class proData extends HttpServlet {
 		String nre = getServletContext().getRealPath("/dataSimple/");
 		String [] args={request.getParameter("number"),request.getParameter("avg"),request.getParameter("random"),nre,request.getParameter("filename")};
 		generateData.generate(args);
-		DataConfig.setDataPath(nre+"\\"+request.getParameter("filename")+".txt");
+/*		DataConfig.setDataPath(nre+"\\"+request.getParameter("filename")+".txt");
 		BufferedReader br=new BufferedReader(new FileReader(new File(DataConfig.getDataPath())));
 		DataConfig.setDataReader(br);
 		DataConfig.setNodeFormat(new BSPNodeFormatImpl());
-		DataConfig.setNodeNum(Integer.parseInt(request.getParameter("number")));
-
+		DataConfig.setNodeNum(Integer.parseInt(request.getParameter("number")));*/
+		String realPath = request.getSession().getServletContext().getRealPath("");
+		GraphData graphData = new GraphData();
+		graphData.UndirectGraphTopK(nre+"\\"+request.getParameter("filename")+".txt",realPath,request.getParameter("filename"));
 	}
 
 	/**

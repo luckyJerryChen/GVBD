@@ -16,6 +16,28 @@
 <meta http-equiv="expires" content="0">
 <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 <meta http-equiv="description" content="This is my page">
+<style>
+  	body{
+  	  position: absolute;
+  	  left:0px;
+  	  top:0px;
+   }
+  .tooltip{
+	 font-family: simsun;
+	 font-size: 24px;
+	 width: 200px;
+	 height: auto;
+	 position: absolute;
+	 left:30px;
+	 top:20px;
+	 text-align: center;
+     border-style: solid; 
+	 border-width: 1px;
+	 background-color: white;
+	 border-radius: 5px;
+  }
+
+</style>
 <link rel="stylesheet" type="text/css"	href="js/extjs/resources/css/ext-all.css">
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script type="text/javascript" charset="UTF-8"	src="js/extjs/bootstrap.js"></script>

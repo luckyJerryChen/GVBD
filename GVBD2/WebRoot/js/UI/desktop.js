@@ -9,38 +9,57 @@ Ext.require([
 Ext.onReady(function() {
 
     var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
-    var filename;
+    
     var win,import_val,production_val,kmeans_val;
     var match = window.location.href;
     var s=match.indexOf("?"); 
     var jsonfile=match.substring(s+1);// t就是?后面的东西了 
     var datafile= 'data/'+jsonfile+'.json';
+    var filename=jsonfile,filenumber;
     var storeChart = Ext.create('Ext.data.JsonStore', {
         fields: ['name', 'data'],
-        data: [
-            { 'name': 'metric one',   'data':10 },
-            { 'name': 'metric two',   'data': 7 },
-            { 'name': 'metric three', 'data': 5 },
-            { 'name': 'metric four',  'data': 2 },
-            { 'name': 'metric five1',  'data':27 },
-            { 'name': 'metric five2',  'data':27 },
-            { 'name': 'metric five3',  'data':27 },
-            { 'name': 'metric five4',  'data':27 },
-        ]
+        autoLoad: true, 
+		  remoteSort: true,  
+		  proxy: {
+		      type: 'ajax',
+		      url: 'dataLevel/'+jsonfile+'.json',
+		      reader: {
+		      	root: "data",
+		      }
+		  }
+//        data: [
+//            { 'name': 'metric one',   'data':10 },
+//            { 'name': 'metric two',   'data': 7 },
+//            { 'name': 'metric three', 'data': 5 },
+//            { 'name': 'metric four',  'data': 2 },
+//            { 'name': 'metric five1',  'data':27 },
+//            { 'name': 'metric five2',  'data':27 },
+//            { 'name': 'metric five3',  'data':27 },
+//            { 'name': 'metric five4',  'data':27 },
+//        ]
     });
     // create the Data Store
 
     var graphDataStore=Ext.create('Ext.data.Store',{
     	fields:[
-                {name:'graphName',type:'string'},
-                {name:'graphData',type:'int'}
+                {name:'name',type:'string'},
+                {name:'data',type:'int'}
             ],
-        data:[
-            {graphName:"A",graphData:700},
-            {graphName:"B",graphData:800},
-            {graphName:"C",graphData:600},
-            {graphName:"D",graphData:50}  
-        ]
+//        data:[
+//            {graphName:"A",graphData:700},
+//            {graphName:"B",graphData:800},
+//            {graphName:"C",graphData:600},
+//            {graphName:"D",graphData:50}  
+//        ]
+          autoLoad: true, 
+  		  remoteSort: true,  
+  		  proxy: {
+  		      type: 'ajax',
+  		      url: 'dataTopK/'+jsonfile+'.json',
+  		      reader: {
+  		      	root: "data",
+  		      }
+  		  }
     });
     var store = Ext.create('Ext.data.Store', {
         fields : [{
@@ -131,7 +150,8 @@ Ext.onReady(function() {
         	                                    method:'POST',  
         	                                    waitTitle: '请稍后',  
         	                                    waitMsg: '正在上传文档文件 ...',  
-        	                                    success: function(fp, action){   
+        	                                    success: function(fp, action){  
+        	                                    	filenumber = Ext.getCmp("number1").getValue();
         	                                    	filename = action['result']['fileName'].substring(0,action['result']['fileName'].indexOf("."));
         	                                    	Ext.MessageBox.alert('成功', '导入数据成功'); 
         	                                        Ext.getCmp("uploadFile").reset();          // 指定文件字段的id清空其内容  
@@ -312,13 +332,15 @@ Ext.onReady(function() {
                 }, {
                     text: '提交',
                     handler: function() {
-                    	filename = Ext.getCmp('filename').getValue();
+                    	
                         if (this.up('form').getForm().isValid()) {
                         	Ext.Ajax.request({
                         	    url: 'servlet/proData',
                         	    params: {avg:Ext.getCmp('avg').getValue(),filename:Ext.getCmp('filename').getValue(),number:Ext.getCmp('number').getValue(),random:Ext.getCmp('random').getValue()},
                         	    async: false,
                         	    success: function(response){
+                        	    	filename = Ext.getCmp('filename').getValue();
+                        	    	filenumber = Ext.getCmp("number").getValue();
                         	    	Ext.MessageBox.alert('ok!','数据生成成功');  
                         	    },
                         	    error:function(response){
@@ -354,6 +376,7 @@ Ext.onReady(function() {
 		title : '图',
 		autoScroll:true,
 		frame :true,//背景颜色
+		
 		initComponent : function() {
 			this.callParent(arguments);
 		},
@@ -368,6 +391,7 @@ Ext.onReady(function() {
 			//var radius = d3.scale.sqrt().range([0, 6]);//值域  
 			var color = d3.scaleOrdinal().range(d3.schemeCategory20);
 			var svg = d3.select("#" + this.id + "-body").append("svg").attr("width", width).attr("height", height);
+			var tooltip = d3.select("#" + this.id + "-body").append("div").attr("class","tooltip").style("opacity",0.0);
 		    transform = d3.zoomIdentity;
 			d3.json(datafile, function(json){
 				var circles_group = svg.append("g");
@@ -380,14 +404,20 @@ Ext.onReady(function() {
 				.attr("stroke","#000");
 				var circles = circles_group.selectAll("circle").data(json.nodes).enter().append("circle");
 				var circleAttributes = circles
-				.attr("cx",function(d){return d.cx})
-				.attr("cy",function(d){return d.cy})
+				.attr("cx",function(d){
+					if(d.name==1)console.log(d.cx);
+					return d.cx})
+				.attr("cy",function(d){
+					if(d.name==1)console.log(d.cy);
+					return d.cy
+					})
 				.attr("r", 5)  
-				//.on("click", clicked)
+				.on("mousemove", mousemove)
+				.on("mouseout", mouseout)
 				//.attr("fill","#6495ed");
 				.style("fill", function(d, i) { 
 					if(d.color){
-						return color(i); 
+						return color(d.color);  	
 					}else{
 						return color(1); 
 					}
@@ -396,8 +426,9 @@ Ext.onReady(function() {
 					
 				});
 				
-				circles.append("title")
-				.text(function(d){return d.value})
+//				circles.append("title")
+//				.text(function(d){return d.value})
+//				.style("font-size","100px");
 				
 				
 //				var texts = circles_group.selectAll("text").data(json.nodes).enter().append("text");						
@@ -417,11 +448,14 @@ Ext.onReady(function() {
 				svg.call(d3.zoom()
 			    	    .scaleExtent([1 / 8, 8])
 			    	    .on("zoom", zoomed));
-//				function clicked(d, i){
-//					console.log(d);
-//					Ext.getCmp('datainfoid').body.update("顶点数为："+d.value+"<br />边数为："+i);
-//					console.log(i);
-//				}
+				function mousemove(d, i){
+					tooltip.html(d.value)
+					.style("opacity",1.0);
+				}
+				function mouseout(d, i){
+					tooltip.html(d.value)
+					.style("opacity",0.0);
+				}
 			    function zoomed() {
 			    	circles_group.attr("transform", d3.event.transform);
 			    }
@@ -673,7 +707,7 @@ Ext.onReady(function() {
 						               fieldLabel: 'Deep 值',
 						               value: 3,
 						               minValue: 1,
-						               value:1,
+						             
 						               allowBlank: false,
 						               hidden: true  
 						           },{
@@ -684,19 +718,19 @@ Ext.onReady(function() {
 						        	   width:100,
 						        	   disabled:true,
 						        	   handler: function() {
-						        		   console.log(filename);
-						        		   if (this.up('form').getForm().isValid() && filename) {
+						        		   console.log(filenumber);
+						        		   if (this.up('form').getForm().isValid() && filename && filenumber) {
 					                        	Ext.Ajax.request({
 					                        	    url: 'servlet/postData',
 					                        	    params: {
 					                        	    	title:Ext.getCmp('title').getValue(),
-					                        	    	speed:Ext.getCmp('speed').getValue(),
 					                        	    	kvalue:Ext.getCmp('kvalue').getValue(),
 					                        	    	isDirected:Ext.getCmp('isDirected').getValue(),  
 					                        	    	cool:Ext.getCmp('cool').getValue(), 
 					                        	    	temperature:Ext.getCmp('temperature').getValue(), 
 					                        	    	deep:Ext.getCmp('deep').getValue(), 
 					                        	    	times:Ext.getCmp('times').getValue(),
+					                        	    	filenumber:filenumber,
 					                        	    	filename:filename
 					                        	    },
 					                        	    async: false,
@@ -794,11 +828,11 @@ Ext.onReady(function() {
 								            shadow: false,
 								            series: [{
 								            	type: 'pie',
-								                field: 'graphData',
+								                field: 'data',
 								                label: {//这里能够使拼饼上面显示，该拼饼属于的部分
-								                    field: 'graphName',
+								                    field: 'name',
 								                    display: 'rotate',
-								                    font: '18px Arial'
+								                    font: '14px Arial'
 								                },
 								                highlight: {//这里是突出效果的声明，margin越大，鼠标悬停在拼饼上面，拼饼突出得越多
 								                    segment: {
@@ -807,15 +841,15 @@ Ext.onReady(function() {
 								                },
 								                tips: {
 								                    trackMouse: true,
-								                    width: 100,
+								                    width: 170,
 								                    height: 28,
 								                    renderer: function(storeItem, item) {
 								                      //calculate percentage.
 								                      var total = 0;
 								                      graphDataStore.each(function(rec) {
-								                          total += rec.get('graphData');
+								                          total += rec.get('data');
 								                      });
-								                      this.setTitle(storeItem.get('graphName') + ': ' + Math.round(storeItem.get('graphData') / total * 100) + '%');
+								                      this.setTitle(storeItem.get('name') + ': ' + Math.round(storeItem.get('data') / total * 100) + '%');
 								                    }
 								                  },
 								                animate: true
@@ -834,9 +868,9 @@ Ext.onReady(function() {
 	function handleActivate() {
 		
 		$.getJSON(datafile, function(data){ 
-		   var node = data.nodes.length;
+			filenumber = data.nodes.length;
 		   var link = data.links.length;
-		   Ext.getCmp('datainfoid').body.update("顶点数为："+node+"<br />边数为："+link);
+		   Ext.getCmp('datainfoid').body.update("顶点数为："+filenumber+"<br />边数为："+link);
 		}); 
 
 	}
